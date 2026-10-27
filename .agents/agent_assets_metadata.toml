@@ -1,0 +1,9 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "4AsMiMOY71bkF9vQEO7u_"
+uri = "file://artifacts/lcc-scoring-demo/public/audio/bg_music.mp3"
+type = "audio"
+title = "background music"
+description = "Generated music: Light minimal indie electronic instrumental for a calm product walkthrough. Plucked synth, soft kick, warm bass, 100 BPM, bright and focused, clear lift around 21 seconds, resolved e…"

@@ -1,0 +1,29 @@
+kind = "video"
+videoAspectRatio = "16:9"
+previewPath = "/scoring-demo/"
+title = "LCC scoring walkthrough"
+description = "An instructional video showing the LCC Intersquad Comp Series mobile scoring process, starting from an event QR code."
+version = "1.0.0"
+id = "artifacts/lcc-scoring-demo"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/scoring-demo/" ]
+localPort = 18905
+
+[services.development]
+run = "pnpm --filter @workspace/lcc-scoring-demo run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/lcc-scoring-demo", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/lcc-scoring-demo/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18905"
+BASE_PATH = "/scoring-demo/"
