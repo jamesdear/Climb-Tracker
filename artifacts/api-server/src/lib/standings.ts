@@ -1,4 +1,4 @@
-const SQUADS = ["RavensWall", "HarroWall", "VauxWall", "BethWall"] as const;
+const SQUADS = ["RavensWall", "HarroWall", "VauxWall", "CroyWall"] as const;
 const AGES = ["U13", "U15", "U17"] as const;
 const GENDERS = ["O", "W+"] as const;
 

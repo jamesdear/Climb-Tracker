@@ -28,7 +28,7 @@ try {
       status: "open",
       pointsByAttempts: [10, 7, 4, 1],
     });
-    const squads = ["RavensWall", "HarroWall", "VauxWall", "BethWall"];
+    const squads = ["RavensWall", "HarroWall", "VauxWall", "CroyWall"];
     for (let i = 0; i < 30; i++) {
       const id = randomUUID();
       const name = `Demo Climber ${String(i + 1).padStart(2, "0")}`;

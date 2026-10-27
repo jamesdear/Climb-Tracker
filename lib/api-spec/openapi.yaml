@@ -519,7 +519,7 @@ components:
         gender: { type: string, enum: [O, W+] }
         birthYear: { type: integer, minimum: 1900, maximum: 2100 }
         climberName: { type: string, minLength: 1, maxLength: 120 }
-        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, BethWall] }
+        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, CroyWall] }
         isClimber: { type: boolean }
         loggerName: { type: string, maxLength: 120 }
         email: { type: string, format: email, maxLength: 254 }
@@ -546,7 +546,7 @@ components:
         eventName: { type: string }
         eventStatus: { type: string, enum: [draft, open, closed] }
         climberName: { type: string }
-        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, BethWall] }
+        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, CroyWall] }
         isClimber: { type: boolean }
         loggerName: { type: ["string", "null"] }
         email: { type: ["string", "null"], format: email }
@@ -564,7 +564,7 @@ components:
         ageBracket: { type: ["string", "null"], enum: [U13, U15, U17, null] }
         id: { type: string, format: uuid }
         climberName: { type: string }
-        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, BethWall] }
+        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, CroyWall] }
         loggerName: { type: ["string", "null"] }
         createdAt: { type: string, format: date-time }
         totalPoints: { type: integer }
@@ -618,7 +618,7 @@ components:
         ageBracket: { type: ["string", "null"], enum: [U13, U15, U17, null] }
         rank: { type: integer, minimum: 1 }
         climberName: { type: string }
-        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, BethWall] }
+        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, CroyWall] }
         totalPoints: { type: integer }
         completedCount: { type: integer }
         attemptCount: { type: integer }
@@ -671,7 +671,7 @@ components:
         eventName: { type: string }
         eventStatus: { type: string, enum: [draft, open, closed] }
         climberName: { type: string }
-        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, BethWall] }
+        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, CroyWall] }
         createdAt: { type: string, format: date-time }
         totalPoints: { type: integer }
         completedCount: { type: integer }
@@ -684,7 +684,7 @@ components:
       type: object
       required: [squad, rank, climberCount, totalPoints, averageScore]
       properties:
-        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, BethWall] }
+        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, CroyWall] }
         rank: { type: ["integer", "null"] }
         climberCount: { type: integer }
         totalPoints: { type: integer }

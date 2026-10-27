@@ -13,5 +13,5 @@ export const ScorecardRegistrationInputSquad = {
   RavensWall: 'RavensWall',
   HarroWall: 'HarroWall',
   VauxWall: 'VauxWall',
-  BethWall: 'BethWall',
+  CroyWall: 'CroyWall',
 } as const;

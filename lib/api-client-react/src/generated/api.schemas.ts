@@ -109,7 +109,7 @@ export const ScorecardRegistrationInputSquad = {
   RavensWall: 'RavensWall',
   HarroWall: 'HarroWall',
   VauxWall: 'VauxWall',
-  BethWall: 'BethWall',
+  CroyWall: 'CroyWall',
 } as const;
 
 export interface ScorecardRegistrationInput {
@@ -192,7 +192,7 @@ export const ScorecardDetailSquad = {
   RavensWall: 'RavensWall',
   HarroWall: 'HarroWall',
   VauxWall: 'VauxWall',
-  BethWall: 'BethWall',
+  CroyWall: 'CroyWall',
 } as const;
 
 export interface ScorecardDetail {
@@ -249,7 +249,7 @@ export const ScorecardSummarySquad = {
   RavensWall: 'RavensWall',
   HarroWall: 'HarroWall',
   VauxWall: 'VauxWall',
-  BethWall: 'BethWall',
+  CroyWall: 'CroyWall',
 } as const;
 
 export interface ScorecardSummary {
@@ -332,7 +332,7 @@ export const SquadResultSquad = {
   RavensWall: 'RavensWall',
   HarroWall: 'HarroWall',
   VauxWall: 'VauxWall',
-  BethWall: 'BethWall',
+  CroyWall: 'CroyWall',
 } as const;
 
 export interface SquadResult {
@@ -383,7 +383,7 @@ export const ResultEntrySquad = {
   RavensWall: 'RavensWall',
   HarroWall: 'HarroWall',
   VauxWall: 'VauxWall',
-  BethWall: 'BethWall',
+  CroyWall: 'CroyWall',
 } as const;
 
 export interface ResultEntry {
@@ -503,7 +503,7 @@ export const AccountScorecardSquad = {
   RavensWall: 'RavensWall',
   HarroWall: 'HarroWall',
   VauxWall: 'VauxWall',
-  BethWall: 'BethWall',
+  CroyWall: 'CroyWall',
 } as const;
 
 export interface AccountScorecard {

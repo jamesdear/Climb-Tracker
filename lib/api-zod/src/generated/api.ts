@@ -34,7 +34,7 @@ export const GetSeriesProgressResponse = zod.object({
 }),
   "uncategorizedCount": zod.number().int(),
   "squads": zod.array(zod.object({
-  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'CroyWall']),
   "rank": zod.number().int().nullable(),
   "climberCount": zod.number().int(),
   "totalPoints": zod.number().int(),
@@ -49,7 +49,7 @@ export const GetSeriesProgressResponse = zod.object({
   "ageBracket": zod.union([zod.literal('U13'),zod.literal('U15'),zod.literal('U17'),zod.literal(null)]).nullish(),
   "rank": zod.number().int().min(1),
   "climberName": zod.string(),
-  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'CroyWall']),
   "totalPoints": zod.number().int(),
   "completedCount": zod.number().int(),
   "attemptCount": zod.number().int()
@@ -141,7 +141,7 @@ export const CreateScorecardBody = zod.object({
   "gender": zod.enum(['O', 'W+']),
   "birthYear": zod.number().int().min(createScorecardBodyBirthYearMin).max(createScorecardBodyBirthYearMax),
   "climberName": zod.string().min(1).max(createScorecardBodyClimberNameMax),
-  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'CroyWall']),
   "isClimber": zod.boolean(),
   "loggerName": zod.string().max(createScorecardBodyLoggerNameMax).optional(),
   "email": zod.string().email().max(createScorecardBodyEmailMax).optional(),
@@ -166,7 +166,7 @@ export const CreateScorecardResponse = zod.object({
   "eventName": zod.string(),
   "eventStatus": zod.enum(['draft', 'open', 'closed']),
   "climberName": zod.string(),
-  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'CroyWall']),
   "isClimber": zod.boolean(),
   "loggerName": zod.string().nullable(),
   "email": zod.string().email().nullable(),
@@ -209,7 +209,7 @@ export const GetScorecardResponse = zod.object({
   "eventName": zod.string(),
   "eventStatus": zod.enum(['draft', 'open', 'closed']),
   "climberName": zod.string(),
-  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'CroyWall']),
   "isClimber": zod.boolean(),
   "loggerName": zod.string().nullable(),
   "email": zod.string().email().nullable(),
@@ -322,7 +322,7 @@ export const getPublicResultsResponseEventPointsByAttemptsMax = 4;
 export const GetPublicResultsResponse = zod.object({
   "uncategorizedCount": zod.number().int(),
   "squads": zod.array(zod.object({
-  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'CroyWall']),
   "rank": zod.number().int().nullable(),
   "climberCount": zod.number().int(),
   "totalPoints": zod.number().int(),
@@ -337,7 +337,7 @@ export const GetPublicResultsResponse = zod.object({
   "ageBracket": zod.union([zod.literal('U13'),zod.literal('U15'),zod.literal('U17'),zod.literal(null)]).nullish(),
   "rank": zod.number().int().min(1),
   "climberName": zod.string(),
-  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'CroyWall']),
   "totalPoints": zod.number().int(),
   "completedCount": zod.number().int(),
   "attemptCount": zod.number().int()
@@ -359,7 +359,7 @@ export const GetPublicResultsResponse = zod.object({
   "ageBracket": zod.union([zod.literal('U13'),zod.literal('U15'),zod.literal('U17'),zod.literal(null)]).nullish(),
   "rank": zod.number().int().min(1),
   "climberName": zod.string(),
-  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'CroyWall']),
   "totalPoints": zod.number().int(),
   "completedCount": zod.number().int(),
   "attemptCount": zod.number().int()
@@ -413,7 +413,7 @@ export const ListMyScorecardsResponseItem = zod.object({
   "eventName": zod.string(),
   "eventStatus": zod.enum(['draft', 'open', 'closed']),
   "climberName": zod.string(),
-  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'CroyWall']),
   "createdAt": zod.coerce.date(),
   "totalPoints": zod.number().int(),
   "completedCount": zod.number().int()
@@ -572,7 +572,7 @@ export const getEventMonitorResponseEventPointsByAttemptsMax = 4;
 
 export const GetEventMonitorResponse = zod.object({
   "squads": zod.array(zod.object({
-  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'CroyWall']),
   "rank": zod.number().int().nullable(),
   "climberCount": zod.number().int(),
   "totalPoints": zod.number().int(),
@@ -596,7 +596,7 @@ export const GetEventMonitorResponse = zod.object({
   "ageBracket": zod.union([zod.literal('U13'),zod.literal('U15'),zod.literal('U17'),zod.literal(null)]).nullish(),
   "id": zod.string().uuid(),
   "climberName": zod.string(),
-  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'CroyWall']),
   "loggerName": zod.string().nullable(),
   "createdAt": zod.coerce.date(),
   "totalPoints": zod.number().int(),
@@ -618,7 +618,7 @@ export const ListEventScorecardsResponseItem = zod.object({
   "ageBracket": zod.union([zod.literal('U13'),zod.literal('U15'),zod.literal('U17'),zod.literal(null)]).nullish(),
   "id": zod.string().uuid(),
   "climberName": zod.string(),
-  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'CroyWall']),
   "loggerName": zod.string().nullable(),
   "createdAt": zod.coerce.date(),
   "totalPoints": zod.number().int(),
@@ -659,7 +659,7 @@ export const GetAdminScorecardResponse = zod.object({
   "eventName": zod.string(),
   "eventStatus": zod.enum(['draft', 'open', 'closed']),
   "climberName": zod.string(),
-  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'CroyWall']),
   "isClimber": zod.boolean(),
   "loggerName": zod.string().nullable(),
   "email": zod.string().email().nullable(),

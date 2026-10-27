@@ -14,7 +14,7 @@ try {
     {name:"A", squad:"RavensWall", birthYear:2014, gender:"O", attempts:1},
     {name:"B", squad:"RavensWall", birthYear:2014, gender:"O", attempts:0},
     {name:"C", squad:"HarroWall", birthYear:2013, gender:"W+", attempts:2},
-    {name:"D", squad:"BethWall", birthYear:2011, gender:null, attempts:3},
+    {name:"D", squad:"CroyWall", birthYear:2011, gender:null, attempts:3},
   ];
   let firstCard = "", firstRecord = "";
   for (const [index, f] of fixtures.entries()) {

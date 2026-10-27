@@ -7,3 +7,11 @@ uri = "file://artifacts/lcc-scoring-demo/public/audio/bg_music.mp3"
 type = "audio"
 title = "background music"
 description = "Generated music: Light minimal indie electronic instrumental for a calm product walkthrough. Plucked synth, soft kick, warm bass, 100 BPM, bright and focused, clear lift around 21 seconds, resolved e…"
+logical_id = "c77d4892-c535-460b-bf91-5f606ebca14e"
+
+[[outputs]]
+id = "MrLfAuSkyhxM5uulgPJWP"
+uri = "file://artifacts/lcc-admin-demo/public/audio/bg_music.mp3"
+type = "audio"
+title = "bg music"
+description = "Generated music: Calm confident corporate minimal electronic instrumental for a software admin walkthrough. Soft plucked synths, light percussion, 100 BPM, steady, clear accents every few seconds, re…"

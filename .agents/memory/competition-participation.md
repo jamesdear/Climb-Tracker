@@ -50,3 +50,9 @@ Squad event scores are the average of the squad's climber scores. Gender categor
 **Why:** The user requested the squad competition and a series-progress page showing category podiums for each event.
 
 **How to apply:** Include zero-score entrants in the squad average, display participant counts, and do not infer missing genders. Do not invent a cumulative series scoring formula.
+
+The fourth participating squad is CroyWall, not BethWall.
+
+**Why:** The user corrected the squad name throughout the product.
+
+**How to apply:** Use CroyWall in future examples, demos and participant-facing content; do not reintroduce the old squad from the original brief.

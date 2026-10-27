@@ -97,7 +97,7 @@
 .hero-art{border-radius:0;box-shadow:none}
 .squad-strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
 .squad-chip{font:700 11px 'Space Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#fff;padding:6px 10px}
-.sq-RavensWall{background:#047732}.sq-HarroWall{background:#772055}.sq-BethWall{background:#cc2c24}.sq-VauxWall{background:#009DDC}
+.sq-RavensWall{background:#047732}.sq-HarroWall{background:#772055}.sq-CroyWall{background:#cc2c24}.sq-VauxWall{background:#009DDC}
 .score-head{border-top:6px solid #F6A017}
 .how{border-top:4px solid #009DDC}
 .topbar{border-bottom:3px solid #F6A017}
@@ -153,7 +153,7 @@ button.boulder .boulder-meta{display:flex;align-items:center;gap:3px;font:700 11
 .sub-head{font:800 16px 'Kumbh Sans',sans-serif;text-transform:uppercase;letter-spacing:.02em;margin:26px 0 10px}
 .squad-list{list-style:none;padding:0;margin:0;display:grid;gap:6px}
 .squad-row{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:10px;background:#fefefd;border:1px solid #e4e1db;border-left:6px solid #383838;padding:10px 12px}
-.sq-line-RavensWall{border-left-color:#047732}.sq-line-HarroWall{border-left-color:#772055}.sq-line-BethWall{border-left-color:#cc2c24}.sq-line-VauxWall{border-left-color:#009DDC}
+.sq-line-RavensWall{border-left-color:#047732}.sq-line-HarroWall{border-left-color:#772055}.sq-line-CroyWall{border-left-color:#cc2c24}.sq-line-VauxWall{border-left-color:#009DDC}
 .squad-rank{font-weight:700;font-size:15px}
 .squad-name{display:flex;flex-direction:column;min-width:0}.squad-name .muted{font-size:12px}
 .squad-avg{font:800 22px 'Kumbh Sans',sans-serif;text-align:right;display:flex;flex-direction:column;line-height:1}.squad-avg small{font:700 10px 'Space Mono',monospace;color:#6b6b6b;text-transform:uppercase}
