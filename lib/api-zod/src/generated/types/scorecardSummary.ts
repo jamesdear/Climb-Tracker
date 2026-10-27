@@ -5,9 +5,12 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { ScorecardSummaryAgeBracket } from './scorecardSummaryAgeBracket';
 import type { ScorecardSummarySquad } from './scorecardSummarySquad';
 
 export interface ScorecardSummary {
+  /** @nullable */
+  ageBracket?: ScorecardSummaryAgeBracket;
   id: string;
   climberName: string;
   squad: ScorecardSummarySquad;

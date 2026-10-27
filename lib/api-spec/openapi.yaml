@@ -502,8 +502,9 @@ components:
         status: { type: string, enum: [open, closed] }
     ScorecardRegistrationInput:
       type: object
-      required: [climberName, squad, isClimber, acceptedTerms]
+      required: [climberName, birthYear, squad, isClimber, acceptedTerms]
       properties:
+        birthYear: { type: integer, minimum: 1900, maximum: 2100 }
         climberName: { type: string, minLength: 1, maxLength: 120 }
         squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, BethWall] }
         isClimber: { type: boolean }
@@ -524,6 +525,8 @@ components:
       type: object
       required: [id, eventId, eventName, eventStatus, climberName, squad, isClimber, loggerName, email, createdAt, totalPoints, completedCount, boulders]
       properties:
+        birthYear: { type: ["integer", "null"] }
+        ageBracket: { type: ["string", "null"], enum: [U13, U15, U17, null] }
         id: { type: string, format: uuid }
         eventId: { type: string, format: uuid }
         eventName: { type: string }
@@ -543,6 +546,7 @@ components:
       type: object
       required: [id, climberName, squad, loggerName, createdAt, totalPoints, completedCount, attemptCount]
       properties:
+        ageBracket: { type: ["string", "null"], enum: [U13, U15, U17, null] }
         id: { type: string, format: uuid }
         climberName: { type: string }
         squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, BethWall] }
@@ -592,6 +596,7 @@ components:
       type: object
       required: [rank, climberName, squad, totalPoints, completedCount, attemptCount]
       properties:
+        ageBracket: { type: ["string", "null"], enum: [U13, U15, U17, null] }
         rank: { type: integer, minimum: 1 }
         climberName: { type: string }
         squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, BethWall] }
@@ -633,6 +638,7 @@ components:
       type: object
       required: [id, eventId, eventName, eventStatus, climberName, squad, createdAt, totalPoints, completedCount]
       properties:
+        ageBracket: { type: ["string", "null"], enum: [U13, U15, U17, null] }
         id: { type: string, format: uuid }
         eventId: { type: string, format: uuid }
         eventName: { type: string }

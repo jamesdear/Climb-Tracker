@@ -106,6 +106,11 @@ export const ScorecardRegistrationInputSquad = {
 
 export interface ScorecardRegistrationInput {
   /**
+     * @minimum 1900
+     * @maximum 2100
+     */
+  birthYear: number;
+  /**
      * @minLength 1
      * @maxLength 120
      */
@@ -139,6 +144,18 @@ export interface BoulderState {
   updatedAt: string | null;
 }
 
+/**
+ * @nullable
+ */
+export type ScorecardDetailAgeBracket = typeof ScorecardDetailAgeBracket[keyof typeof ScorecardDetailAgeBracket] | null;
+
+
+export const ScorecardDetailAgeBracket = {
+  U13: 'U13',
+  U15: 'U15',
+  U17: 'U17',
+} as const;
+
 export type ScorecardDetailEventStatus = typeof ScorecardDetailEventStatus[keyof typeof ScorecardDetailEventStatus];
 
 
@@ -159,6 +176,10 @@ export const ScorecardDetailSquad = {
 } as const;
 
 export interface ScorecardDetail {
+  /** @nullable */
+  birthYear?: number | null;
+  /** @nullable */
+  ageBracket?: ScorecardDetailAgeBracket;
   id: string;
   eventId: string;
   eventName: string;
@@ -176,6 +197,18 @@ export interface ScorecardDetail {
   boulders: BoulderState[];
 }
 
+/**
+ * @nullable
+ */
+export type ScorecardSummaryAgeBracket = typeof ScorecardSummaryAgeBracket[keyof typeof ScorecardSummaryAgeBracket] | null;
+
+
+export const ScorecardSummaryAgeBracket = {
+  U13: 'U13',
+  U15: 'U15',
+  U17: 'U17',
+} as const;
+
 export type ScorecardSummarySquad = typeof ScorecardSummarySquad[keyof typeof ScorecardSummarySquad];
 
 
@@ -187,6 +220,8 @@ export const ScorecardSummarySquad = {
 } as const;
 
 export interface ScorecardSummary {
+  /** @nullable */
+  ageBracket?: ScorecardSummaryAgeBracket;
   id: string;
   climberName: string;
   squad: ScorecardSummarySquad;
@@ -262,6 +297,18 @@ export interface EventMonitor {
   scorecards: ScorecardSummary[];
 }
 
+/**
+ * @nullable
+ */
+export type ResultEntryAgeBracket = typeof ResultEntryAgeBracket[keyof typeof ResultEntryAgeBracket] | null;
+
+
+export const ResultEntryAgeBracket = {
+  U13: 'U13',
+  U15: 'U15',
+  U17: 'U17',
+} as const;
+
 export type ResultEntrySquad = typeof ResultEntrySquad[keyof typeof ResultEntrySquad];
 
 
@@ -273,6 +320,8 @@ export const ResultEntrySquad = {
 } as const;
 
 export interface ResultEntry {
+  /** @nullable */
+  ageBracket?: ResultEntryAgeBracket;
   /** @minimum 1 */
   rank: number;
   climberName: string;
@@ -319,6 +368,18 @@ export interface AccountProfile {
   createdAt: string;
 }
 
+/**
+ * @nullable
+ */
+export type AccountScorecardAgeBracket = typeof AccountScorecardAgeBracket[keyof typeof AccountScorecardAgeBracket] | null;
+
+
+export const AccountScorecardAgeBracket = {
+  U13: 'U13',
+  U15: 'U15',
+  U17: 'U17',
+} as const;
+
 export type AccountScorecardEventStatus = typeof AccountScorecardEventStatus[keyof typeof AccountScorecardEventStatus];
 
 
@@ -339,6 +400,8 @@ export const AccountScorecardSquad = {
 } as const;
 
 export interface AccountScorecard {
+  /** @nullable */
+  ageBracket?: AccountScorecardAgeBracket;
   id: string;
   eventId: string;
   eventName: string;

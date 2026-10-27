@@ -6,10 +6,15 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { BoulderState } from './boulderState';
+import type { ScorecardDetailAgeBracket } from './scorecardDetailAgeBracket';
 import type { ScorecardDetailEventStatus } from './scorecardDetailEventStatus';
 import type { ScorecardDetailSquad } from './scorecardDetailSquad';
 
 export interface ScorecardDetail {
+  /** @nullable */
+  birthYear?: number | null;
+  /** @nullable */
+  ageBracket?: ScorecardDetailAgeBracket;
   id: string;
   eventId: string;
   eventName: string;

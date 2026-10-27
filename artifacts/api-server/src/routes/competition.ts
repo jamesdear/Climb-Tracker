@@ -26,6 +26,7 @@ import {
   userProfilesTable,
 } from "@workspace/db";
 import { logger } from "../lib/logger";
+import { ageBracket, eventYear } from "../lib/age-bracket";
 import {
   buildScorecardDetail,
   eventResults,
@@ -59,7 +60,7 @@ router.post("/events/:eventId/scorecards", async (req, res): Promise<void> => {
     return;
   }
   if (event.status !== "open") {
-    res.status(409).json({ error: "This event is not accepting registrations" });
+    res.status(409).json({ error: "This event is not open for scoring" });
     return;
   }
 
@@ -69,9 +70,13 @@ router.post("/events/:eventId/scorecards", async (req, res): Promise<void> => {
     return;
   }
   const registration = body.data;
+  if (!ageBracket(registration.birthYear, eventYear(event))) {
+    res.status(400).json({ error: "Year of birth must place the climber in U13, U15 or U17 at the end of the event year." });
+    return;
+  }
   if (!registration.isClimber && !registration.loggerName?.trim()) {
     res.status(400).json({
-      error: "Logger name is required when logging for another climber",
+      error: "Supervisor name is required when logging for another climber",
     });
     return;
   }
@@ -85,6 +90,7 @@ router.post("/events/:eventId/scorecards", async (req, res): Promise<void> => {
     .values({
       eventId: event.id,
       climberName: registration.climberName.trim(),
+      birthYear: registration.birthYear,
       squad: registration.squad,
       isClimber: registration.isClimber,
       loggerName: registration.isClimber

@@ -105,3 +105,46 @@
 @media(max-width:480px){.brand-logo{height:36px}.brand-name{font-size:11px;padding-left:9px}.hero h1{font-size:40px}}
 
 .home-title{font:800 clamp(24px,4vw,34px)/1.1 'Kumbh Sans',sans-serif;text-transform:uppercase;letter-spacing:-.01em;margin:32px 0 0;border-left:4px solid #F6A017;padding-left:12px}
+
+/* Scoring controls (mobile first) */
+html,body{overflow-x:hidden}
+.boulder-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+button.boulder{min-height:76px;padding:10px 6px;align-items:center;justify-content:center;gap:2px;text-align:center;color:#1d1d1b;font:inherit;cursor:pointer;transition:transform .12s}
+button.boulder:active{transform:scale(.96)}
+button.boulder:focus-visible{outline:3px solid #009DDC;outline-offset:2px}
+button.boulder .boulder-num{font:800 22px 'Kumbh Sans',sans-serif;color:#1d1d1b}
+button.boulder .boulder-points{font-size:11px;font-weight:700;color:#6b6b6b}
+button.boulder .boulder-meta{display:flex;align-items:center;gap:3px;font:700 11px 'Space Mono',monospace}
+.boulder.tried{border-color:#F6A017;background:#fff7e8}
+.boulder.done .boulder-meta{color:#047732}
+.modal-backdrop{overflow-y:auto;align-items:end;padding:0}
+.modal.sheet{width:min(480px,100%);max-height:100dvh;overflow-y:auto;border-radius:0;border-top:5px solid #F6A017;padding:20px 18px calc(22px + env(safe-area-inset-bottom))}
+@media(min-width:600px){.modal-backdrop{align-items:center;padding:18px}.modal.sheet{max-height:calc(100dvh - 36px)}}
+.sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.sheet-title{font:800 30px 'Kumbh Sans',sans-serif;margin:4px 0 0;text-transform:uppercase}
+.icon-btn{width:48px;height:48px;display:grid;place-items:center;border:1px solid #d9d6d0;background:#fdfcfa;color:#1d1d1b;flex:0 0 auto}
+.sheet-summary{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #e4e1db;margin:10px 0 6px;font-size:14px}
+.sheet-q{font-weight:700;margin:16px 0 4px}
+.control-block{margin:18px 0}
+.control-label{display:block;font:700 11px 'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#383838;margin-bottom:8px}
+.slide-track{position:relative;height:64px;background:#efede8;border:1px solid #d9d6d0;user-select:none;touch-action:none;overflow:hidden}
+.slide-track.on{background:#e6f3eb;border-color:#047732}
+.slide-track.disabled{opacity:.5}
+.slide-label{position:absolute;inset:0;display:grid;place-items:center;padding:0 64px;font-size:13px;font-weight:700;color:#383838;text-align:center;pointer-events:none}
+.slide-thumb{position:absolute;top:4px;left:4px;width:56px;height:54px;background:#383838;color:#fdfcfa;display:grid;place-items:center;font-size:30px;cursor:grab;touch-action:none;transition:transform .2s ease}
+.slide-track.on .slide-thumb{background:#047732}
+.slide-thumb.dragging{transition:none;cursor:grabbing}
+.slide-thumb:focus-visible{outline:3px solid #009DDC;outline-offset:2px}
+.spinner{display:grid;grid-template-columns:64px 1fr 64px;align-items:center;border:1px solid #d9d6d0;background:#fdfcfa}
+.spinner button{height:64px;border:0;background:#383838;color:#fdfcfa;display:grid;place-items:center}
+.spinner button:disabled{background:#d9d6d0;color:#8a8a8a;cursor:not-allowed}
+.spinner-value{text-align:center;font:800 34px 'Kumbh Sans',sans-serif}
+.completed-edit{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.completed-edit .btn{min-height:44px}
+.small-note{font-size:12px;margin-top:8px}
+.form-error{color:#cc2c24;font-size:14px;font-weight:600;margin:10px 0}
+.field-help{font-size:12px;color:#6b6b6b}.field-help.bad{color:#cc2c24;font-weight:600}
+.btn{min-height:44px}
+.field input,.field select{min-height:48px;font-size:16px}
+@media(max-width:480px){.page{padding:24px 0 56px}.page-title{font-size:30px}.score-head{margin:16px 0}.navlinks a,.nav-button{padding:10px 0}.table-wrap table{min-width:560px}}
+@media(max-width:360px){.boulder-grid{gap:6px}button.boulder{min-height:68px}}

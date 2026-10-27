@@ -1,6 +1,6 @@
 import {
   boolean,
-  date,
+  integer,
   index,
   pgTable,
   text,
@@ -18,6 +18,7 @@ export const scorecardsTable = pgTable(
       .notNull()
       .references(() => eventsTable.id, { onDelete: "cascade" }),
     climberName: varchar("climber_name", { length: 120 }).notNull(),
+    birthYear: integer("birth_year"),
     squad: varchar("squad", { length: 32 }).notNull(),
     isClimber: boolean("is_climber").notNull(),
     loggerName: varchar("logger_name", { length: 120 }),

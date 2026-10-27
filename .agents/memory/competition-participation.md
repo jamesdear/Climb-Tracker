@@ -3,11 +3,11 @@ name: Competition participation
 description: Product constraints for local climbing competition participation and score history.
 ---
 
-Competitors must be able to start scoring during an open event without signing in, including parents logging for children. Optional accounts support repeat access. The season has four events; the requested default format is twenty boulders with four attempts each.
+Competitors must be able to start scoring during an open event without signing in, including supervisors logging for children. Optional accounts support repeat access. The season has four events; the requested default format is twenty boulders with four attempts each, scoring 10, 7, 4, 1 points.
 
 **Why:** The organizer runs an informal local competition and needs quick QR-based entry at the wall.
 
-**How to apply:** Do not introduce a mandatory login into scorecard setup or scoring. Keep parent/logger identity separate from climber identity.
+**How to apply:** Do not introduce a mandatory login into scorecard setup or scoring. Keep supervisor identity separate from climber identity; use “supervisor”, not “parent”.
 
 Competition registration happens in advance and is invite-only for children in the squads. The website is for existing participants to set up scorecards, not to register for the competition.
 
@@ -26,3 +26,15 @@ The product is called "LCC Intersquad Comp Series" and uses branding from https:
 **Why:** The user supplied the official name and brand reference.
 
 **How to apply:** Keep that identity consistent in future pages, emails, and assets; do not revert to the original generic Boulder Comp branding.
+
+The user-side experience is mobile-first and will rarely be viewed on a laptop. Selected boulders need a left-to-right completion slider opening an attempts confirmation modal, plus a failed-attempts add/remove spinner, not a generic “Log result” button.
+
+**Why:** The user explicitly repeated the interaction requirement and clarified actual usage.
+
+**How to apply:** Preserve those direct controls and prioritise touch interaction in future scoring changes.
+
+Collect year of birth, not full birth date. Age brackets use age at calendar year end: under 13 is U13, ages 13–14 U15, ages 15–16 U17.
+
+**Why:** The user selected year of birth and calendar year end as the age cutoff.
+
+**How to apply:** Use the event year consistently for bracket calculation; keep birth year off public standings.

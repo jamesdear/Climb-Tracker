@@ -17,7 +17,7 @@ export const eventsTable = pgTable("boulder_events", {
   pointsByAttempts: jsonb("points_by_attempts")
     .$type<number[]>()
     .notNull()
-    .default([100, 80, 60, 40]),
+    .default([10, 7, 4, 1]),
   resultsReleased: boolean("results_released").notNull().default(false),
   resultsReleasedAt: timestamp("results_released_at", { withTimezone: true }),
   createdByUserId: text("created_by_user_id"),

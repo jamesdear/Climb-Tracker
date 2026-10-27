@@ -5,9 +5,12 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { ResultEntryAgeBracket } from './resultEntryAgeBracket';
 import type { ResultEntrySquad } from './resultEntrySquad';
 
 export interface ResultEntry {
+  /** @nullable */
+  ageBracket?: ResultEntryAgeBracket;
   /** @minimum 1 */
   rank: number;
   climberName: string;

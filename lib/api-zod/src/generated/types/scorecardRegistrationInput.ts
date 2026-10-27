@@ -9,6 +9,11 @@ import type { ScorecardRegistrationInputSquad } from './scorecardRegistrationInp
 
 export interface ScorecardRegistrationInput {
   /**
+     * @minimum 1900
+     * @maximum 2100
+     */
+  birthYear: number;
+  /**
      * @minLength 1
      * @maxLength 120
      */

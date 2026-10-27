@@ -5,10 +5,13 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { AccountScorecardAgeBracket } from './accountScorecardAgeBracket';
 import type { AccountScorecardEventStatus } from './accountScorecardEventStatus';
 import type { AccountScorecardSquad } from './accountScorecardSquad';
 
 export interface AccountScorecard {
+  /** @nullable */
+  ageBracket?: AccountScorecardAgeBracket;
   id: string;
   eventId: string;
   eventName: string;

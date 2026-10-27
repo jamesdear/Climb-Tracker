@@ -1,4 +1,5 @@
 import { and, desc, eq } from "drizzle-orm";
+import { ageBracket, eventYear } from "./age-bracket";
 import {
   attemptRecordsTable,
   db,
@@ -65,6 +66,8 @@ export function buildScorecardDetail(
     eventName: event.name,
     eventStatus: event.status,
     climberName: scorecard.climberName,
+    birthYear: scorecard.birthYear,
+    ageBracket: ageBracket(scorecard.birthYear, eventYear(event)),
     squad: scorecard.squad,
     isClimber: scorecard.isClimber,
     loggerName: scorecard.loggerName,
@@ -82,6 +85,7 @@ export function buildScorecardSummary(
   return {
     id: detail.id,
     climberName: detail.climberName,
+    ageBracket: detail.ageBracket,
     squad: detail.squad,
     loggerName: detail.loggerName,
     createdAt: detail.createdAt,
@@ -152,6 +156,7 @@ export async function eventResults(event: Event) {
       const boulders = buildBoulderStates(event, records);
       return {
         climberName: scorecard.climberName,
+        ageBracket: ageBracket(scorecard.birthYear, eventYear(event)),
         squad: scorecard.squad,
         totalPoints: boulders.reduce((total, boulder) => total + boulder.points, 0),
         completedCount: boulders.filter((boulder) => boulder.completed).length,
