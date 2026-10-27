@@ -8,4 +8,5 @@
 
 export type InviteOrganizer201 = {
   message: string;
+  invitationUrl?: string;
 };

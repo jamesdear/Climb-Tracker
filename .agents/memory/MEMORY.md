@@ -1,2 +1,3 @@
 - [Competition participation](competition-participation.md) — informal QR entry, parent loggers, and attributed append-only scoring are core requirements.
 - [Production admin identity](production-admin-identity.md) — copied preview admin profiles can block first-admin access in the production Clerk tenant.
+- [Clerk invitation delivery](clerk-invitation-delivery.md) — absolute app redirects are required; API acceptance is not proof of email delivery or successful signup.

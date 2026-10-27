@@ -112,30 +112,58 @@ router.post("/admin/invitations", requireAdmin, async (req, res): Promise<void> 
     return;
   }
   const email = body.data.email.trim().toLowerCase();
+  const manual = body.data.delivery === "manual";
+  const expiresInDays = manual ? 1 : 7;
+  // Relative redirect URLs resolve against Clerk's host, not this application.
+  const appUrl = process.env.NODE_ENV === "production"
+    ? process.env.APP_PUBLIC_URL
+    : process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : undefined;
+  if (!appUrl) {
+    res.status(503).json({ error: "The application's invitation URL is not configured." });
+    return;
+  }
+  const redirectUrl = new URL("/sign-up", appUrl).href;
+  const existingUsers = await clerkClient.users.getUserList({ emailAddress: [email], limit: 1 });
+  if (existingUsers.totalCount > 0) {
+    res.status(409).json({ error: "This email already has an account. Use Make organizer below instead." });
+    return;
+  }
   const id = randomUUID();
+  let invitationUrl: string | undefined;
   // Clerk's account invitation is delivered by Clerk, not an unverified Resend sender.
   await db.insert(organizerInvitationsTable).values({
     id, email, invitedBy: getAuth(req).userId!, status: "sending",
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    expiresAt: new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000),
   });
   try {
-    await clerkClient.invitations.createInvitation({
-      emailAddress: email, expiresInDays: 7, notify: true, ignoreExisting: false,
-      redirectUrl: "/sign-up",
+    const invitation = await clerkClient.invitations.createInvitation({
+      emailAddress: email, expiresInDays, notify: !manual, ignoreExisting: manual,
+      redirectUrl,
       publicMetadata: { organizerInvitationId: id },
     });
+    if (manual) {
+      invitationUrl = invitation.url;
+      if (!invitationUrl) {
+        await clerkClient.invitations.revokeInvitation(invitation.id);
+        throw new Error("Provider did not return an invitation URL");
+      }
+    }
   } catch (error) {
     await db.update(organizerInvitationsTable).set({ status: "failed" })
       .where(eq(organizerInvitationsTable.id, id));
     const status = typeof error === "object" && error !== null && "status" in error ? error.status : null;
     res.status(status === 422 ? 409 : 502).json({ error: status === 422
       ? "An account or invitation may already exist for this email. For an existing account, use Make organizer below."
+      : manual ? "Could not create an invitation link. Please try again."
       : "The email provider could not send the invitation. Please try again." });
     return;
   }
   await db.update(organizerInvitationsTable).set({ status: "sent" })
     .where(eq(organizerInvitationsTable.id, id));
-  res.status(201).json({ message: `Invitation sent to ${email}. It expires in 7 days.` });
+  res.setHeader("Cache-Control", "no-store");
+  res.status(201).json(manual
+    ? { message: `Invitation link created for ${email}. It expires in 24 hours. No email was sent.`, invitationUrl }
+    : { message: `Invitation submitted for ${email}. It expires in 7 days.`, });
 });
 
 router.post("/auth/profile", requireUser, async (req, res): Promise<void> => {

@@ -5,8 +5,10 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { OrganizerInvitationInputDelivery } from './organizerInvitationInputDelivery';
 
 export interface OrganizerInvitationInput {
   /** @maxLength 254 */
   email: string;
+  delivery?: OrganizerInvitationInputDelivery;
 }

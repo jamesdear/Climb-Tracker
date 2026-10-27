@@ -84,7 +84,7 @@ export const getInviteOrganizerUrl = () => {
 }
 
 /**
- * @summary Email an organizer account invitation
+ * @summary Create or email an organizer account invitation
  */
 export const inviteOrganizer = async (organizerInvitationInput: OrganizerInvitationInput, options?: Parameters<typeof customFetch>[1]): Promise<InviteOrganizer201> => {
 
@@ -150,7 +150,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type InviteOrganizerMutationVariables = {data: BodyType<OrganizerInvitationInput>}
 
     /**
- * @summary Email an organizer account invitation
+ * @summary Create or email an organizer account invitation
  */
 export const useInviteOrganizer = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof inviteOrganizer>>, TError,InviteOrganizerMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}

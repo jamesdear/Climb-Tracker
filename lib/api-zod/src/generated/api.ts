@@ -9,18 +9,20 @@ import * as zod from 'zod';
 
 
 /**
- * @summary Email an organizer account invitation
+ * @summary Create or email an organizer account invitation
  */
 export const inviteOrganizerBodyEmailMax = 254;
 
-
+export const inviteOrganizerBodyDeliveryDefault = `email`;
 
 export const InviteOrganizerBody = zod.object({
-  "email": zod.string().email().max(inviteOrganizerBodyEmailMax)
+  "email": zod.string().email().max(inviteOrganizerBodyEmailMax),
+  "delivery": zod.enum(['email', 'manual']).default(inviteOrganizerBodyDeliveryDefault)
 })
 
 export const InviteOrganizerResponse = zod.object({
-  "message": zod.string()
+  "message": zod.string(),
+  "invitationUrl": zod.string().optional()
 })
 
 

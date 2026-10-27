@@ -5,9 +5,18 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export type OrganizerInvitationInputDelivery = typeof OrganizerInvitationInputDelivery[keyof typeof OrganizerInvitationInputDelivery];
+
+
+export const OrganizerInvitationInputDelivery = {
+  email: 'email',
+  manual: 'manual',
+} as const;
+
 export interface OrganizerInvitationInput {
   /** @maxLength 254 */
   email: string;
+  delivery?: OrganizerInvitationInputDelivery;
 }
 
 export interface HealthStatus {
@@ -552,5 +561,6 @@ export interface SeriesProgress {
 
 export type InviteOrganizer201 = {
   message: string;
+  invitationUrl?: string;
 };
 
