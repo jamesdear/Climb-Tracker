@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Boulder Comp"
+description = "An event scoring app for local climbing competitions. Competitors or parents can log boulder attempts from an event QR link, while admins manage events, review scorecards, monitor scores, and release final results."
+version = "1.0.0"
+id = "artifacts/boulder-comp"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22700
+
+[services.development]
+run = "pnpm --filter @workspace/boulder-comp run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/boulder-comp", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/boulder-comp/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22700"
+BASE_PATH = "/"
