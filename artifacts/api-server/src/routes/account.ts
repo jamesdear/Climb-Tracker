@@ -1,5 +1,5 @@
 import { clerkClient, getAuth } from "@clerk/express";
-import { count, desc, eq, or } from "drizzle-orm";
+import { count, desc, eq, or, sql } from "drizzle-orm";
 import { Router, type IRouter } from "express";
 import {
   GetMyAccountResponse,
@@ -18,6 +18,7 @@ import {
 } from "@workspace/db";
 import { requireAdmin, requireUser } from "../middlewares/appAuth";
 import { loadScorecard } from "../lib/boulder-competition";
+import { initialAdminGrant } from "../lib/initial-admin";
 
 const router: IRouter = Router();
 
@@ -39,28 +40,27 @@ async function syncAccountProfile(
     preferredName?.trim() ||
     "Competitor";
 
-  const [existing] = await db
+  return db.transaction(async (tx) => {
+  await tx.execute(sql`SELECT pg_advisory_xact_lock(47123019)`);
+  const [existing] = await tx
     .select()
     .from(userProfilesTable)
     .where(eq(userProfilesTable.clerkUserId, userId))
     .limit(1);
 
-  const [admin] = await db
-    .select({ clerkUserId: userProfilesTable.clerkUserId })
+  const admins = await tx
+    .select({ clerkUserId: userProfilesTable.clerkUserId, email: userProfilesTable.email })
     .from(userProfilesTable)
-    .where(eq(userProfilesTable.role, "admin"))
-    .limit(1);
-  const initialAdminEmail = process.env.INITIAL_ADMIN_EMAIL?.trim().toLowerCase();
-  const becomesInitialAdmin =
-    !admin &&
-    !!email &&
-    !!initialAdminEmail &&
-    email.toLowerCase() === initialAdminEmail;
+    .where(eq(userProfilesTable.role, "admin"));
+  const { grant: becomesInitialAdmin, staleIds } = existing?.role === "admin"
+    ? { grant: false, staleIds: [] as string[] }
+    : await initialAdminGrant(email, process.env.INITIAL_ADMIN_EMAIL, admins,
+        (id) => clerkClient.users.getUser(id));
   const role = existing?.role === "admin" || becomesInitialAdmin
     ? "admin"
     : "competitor";
 
-  const [profile] = await db
+  const [profile] = await tx
     .insert(userProfilesTable)
     .values({
       clerkUserId: userId,
@@ -78,7 +78,13 @@ async function syncAccountProfile(
       },
     })
     .returning();
+  for (const staleId of staleIds) {
+    await tx.update(userProfilesTable)
+      .set({ role: "competitor", updatedAt: new Date() })
+      .where(eq(userProfilesTable.clerkUserId, staleId));
+  }
   return profile;
+  });
 }
 
 router.post("/auth/profile", requireUser, async (req, res): Promise<void> => {
