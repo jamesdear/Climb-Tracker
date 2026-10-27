@@ -10,6 +10,14 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: events
+    description: Public event and results operations
+  - name: scorecards
+    description: Competitor scorecards and immutable attempt history
+  - name: account
+    description: Optional competitor and administrator accounts
+  - name: admin
+    description: Administrator operations
 paths:
   /healthz:
     get:
@@ -24,6 +32,422 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /events/open:
+    get:
+      operationId: listOpenEvents
+      tags: [events]
+      summary: List open events
+      responses:
+        "200":
+          description: Open events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Event"
+  /events/{eventId}:
+    get:
+      operationId: getPublicEvent
+      tags: [events]
+      summary: Get an event for scorecard registration
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Event details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "404":
+          description: Event not found
+  /events/{eventId}/scorecards:
+    post:
+      operationId: createScorecard
+      tags: [scorecards]
+      summary: Register a competitor for an open event
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScorecardRegistrationInput"
+      responses:
+        "201":
+          description: Created scorecard
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScorecardDetail"
+        "400":
+          description: Invalid registration
+        "409":
+          description: Event is not open
+  /scorecards/{scorecardId}:
+    get:
+      operationId: getScorecard
+      tags: [scorecards]
+      summary: Get a scorecard and its current boulder states
+      parameters:
+        - in: path
+          name: scorecardId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Scorecard
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScorecardDetail"
+        "404":
+          description: Scorecard not found
+  /scorecards/{scorecardId}/history:
+    get:
+      operationId: getScorecardHistory
+      tags: [scorecards]
+      summary: Get the immutable record history for a scorecard
+      parameters:
+        - in: path
+          name: scorecardId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Append-only attempt and correction history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AttemptRecord"
+  /scorecards/{scorecardId}/boulders/{boulderNumber}/records:
+    post:
+      operationId: logAttemptRecord
+      tags: [scorecards]
+      summary: Append a boulder scorecard record
+      parameters:
+        - in: path
+          name: scorecardId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: boulderNumber
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttemptRecordInput"
+      responses:
+        "201":
+          description: New immutable record and email delivery status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AttemptLogResult"
+        "400":
+          description: Invalid attempt state
+        "403":
+          description: Scorecard is closed
+        "409":
+          description: Scorecard changed since it was loaded
+  /events/{eventId}/results:
+    get:
+      operationId: getPublicResults
+      tags: [events]
+      summary: Get released public results
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Released results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResultsResponse"
+        "404":
+          description: Results have not been released
+  /auth/profile:
+    post:
+      operationId: saveAccountProfile
+      tags: [account]
+      summary: Save the signed-in user's display details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountProfileInput"
+      responses:
+        "200":
+          description: Current account profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountProfile"
+        "401":
+          description: Sign in required
+  /auth/me:
+    get:
+      operationId: getMyAccount
+      tags: [account]
+      summary: Get the signed-in user's role and profile
+      responses:
+        "200":
+          description: Current account profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountProfile"
+        "401":
+          description: Sign in required
+  /auth/scorecards:
+    get:
+      operationId: listMyScorecards
+      tags: [account]
+      summary: List scorecards linked to the signed-in user's account
+      responses:
+        "200":
+          description: Current and previously linked scorecards
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AccountScorecard"
+        "401":
+          description: Sign in required
+  /admin/events:
+    get:
+      operationId: listAdminEvents
+      tags: [admin]
+      summary: List events for administration
+      responses:
+        "200":
+          description: Events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Event"
+        "401":
+          description: Sign in required
+        "403":
+          description: Administrator access required
+    post:
+      operationId: createEvent
+      tags: [admin]
+      summary: Create a draft event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventInput"
+      responses:
+        "201":
+          description: Created event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+  /admin/events/{eventId}:
+    patch:
+      operationId: updateEvent
+      tags: [admin]
+      summary: Update event details and scoring values
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventUpdate"
+      responses:
+        "200":
+          description: Updated event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+  /admin/events/{eventId}/status:
+    patch:
+      operationId: updateEventStatus
+      tags: [admin]
+      summary: Open or close an event
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventStatusInput"
+      responses:
+        "200":
+          description: Updated event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+  /admin/events/{eventId}/monitor:
+    get:
+      operationId: getEventMonitor
+      tags: [admin]
+      summary: Get live event totals and scorecards
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Live event monitoring data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventMonitor"
+  /admin/events/{eventId}/scorecards:
+    get:
+      operationId: listEventScorecards
+      tags: [admin]
+      summary: List scorecards for an event
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Event scorecards
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ScorecardSummary"
+  /admin/scorecards/{scorecardId}:
+    get:
+      operationId: getAdminScorecard
+      tags: [admin]
+      summary: Inspect a scorecard and its full history
+      parameters:
+        - in: path
+          name: scorecardId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Scorecard and immutable history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminScorecard"
+  /admin/events/{eventId}/release:
+    post:
+      operationId: releaseEventResults
+      tags: [admin]
+      summary: Release final results to the public
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Event with results released
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+  /admin/users:
+    get:
+      operationId: listAdminUsers
+      tags: [admin]
+      summary: List registered accounts and their roles
+      responses:
+        "200":
+          description: Accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AccountProfile"
+  /admin/users/{clerkUserId}/role:
+    patch:
+      operationId: updateAccountRole
+      tags: [admin]
+      summary: Change an account's app role
+      parameters:
+        - in: path
+          name: clerkUserId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountRoleInput"
+      responses:
+        "200":
+          description: Updated account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountProfile"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +457,194 @@ components:
           type: string
       required:
         - status
+    Event:
+      type: object
+      required: [id, name, eventDate, status, boulderCount, maxAttempts, pointsByAttempts, resultsReleased, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        eventDate: { type: ["string", "null"], format: date }
+        status: { type: string, enum: [draft, open, closed] }
+        boulderCount: { type: integer, enum: [20] }
+        maxAttempts: { type: integer, enum: [4] }
+        pointsByAttempts:
+          type: array
+          minItems: 4
+          maxItems: 4
+          items: { type: integer, minimum: 0 }
+        resultsReleased: { type: boolean }
+        createdAt: { type: string, format: date-time }
+    EventInput:
+      type: object
+      required: [name, pointsByAttempts]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 120 }
+        eventDate: { type: ["string", "null"], format: date }
+        pointsByAttempts:
+          type: array
+          minItems: 4
+          maxItems: 4
+          items: { type: integer, minimum: 0 }
+    EventUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 120 }
+        eventDate: { type: ["string", "null"], format: date }
+        pointsByAttempts:
+          type: array
+          minItems: 4
+          maxItems: 4
+          items: { type: integer, minimum: 0 }
+    EventStatusInput:
+      type: object
+      required: [status]
+      properties:
+        status: { type: string, enum: [open, closed] }
+    ScorecardRegistrationInput:
+      type: object
+      required: [climberName, squad, isClimber, acceptedTerms]
+      properties:
+        climberName: { type: string, minLength: 1, maxLength: 120 }
+        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, BethWall] }
+        isClimber: { type: boolean }
+        loggerName: { type: string, maxLength: 120 }
+        email: { type: string, format: email, maxLength: 254 }
+        acceptedTerms: { type: boolean, enum: [true] }
+    BoulderState:
+      type: object
+      required: [boulderNumber, attempts, completed, points, currentRecordId, updatedAt]
+      properties:
+        boulderNumber: { type: integer, minimum: 1, maximum: 20 }
+        attempts: { type: integer, minimum: 0, maximum: 4 }
+        completed: { type: boolean }
+        points: { type: integer, minimum: 0 }
+        currentRecordId: { type: ["string", "null"], format: uuid }
+        updatedAt: { type: ["string", "null"], format: date-time }
+    ScorecardDetail:
+      type: object
+      required: [id, eventId, eventName, eventStatus, climberName, squad, isClimber, loggerName, email, createdAt, totalPoints, completedCount, boulders]
+      properties:
+        id: { type: string, format: uuid }
+        eventId: { type: string, format: uuid }
+        eventName: { type: string }
+        eventStatus: { type: string, enum: [draft, open, closed] }
+        climberName: { type: string }
+        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, BethWall] }
+        isClimber: { type: boolean }
+        loggerName: { type: ["string", "null"] }
+        email: { type: ["string", "null"], format: email }
+        createdAt: { type: string, format: date-time }
+        totalPoints: { type: integer }
+        completedCount: { type: integer }
+        boulders:
+          type: array
+          items: { $ref: "#/components/schemas/BoulderState" }
+    ScorecardSummary:
+      type: object
+      required: [id, climberName, squad, loggerName, createdAt, totalPoints, completedCount, attemptCount]
+      properties:
+        id: { type: string, format: uuid }
+        climberName: { type: string }
+        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, BethWall] }
+        loggerName: { type: ["string", "null"] }
+        createdAt: { type: string, format: date-time }
+        totalPoints: { type: integer }
+        completedCount: { type: integer }
+        attemptCount: { type: integer }
+    AttemptRecordInput:
+      type: object
+      required: [attempts, completed, expectedRecordId]
+      properties:
+        attempts: { type: integer, minimum: 0, maximum: 4 }
+        completed: { type: boolean }
+        expectedRecordId: { type: ["string", "null"], format: uuid }
+    AttemptRecord:
+      type: object
+      required: [id, scorecardId, boulderNumber, attempts, completed, actorName, actorUserId, actorRole, previousRecordId, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        scorecardId: { type: string, format: uuid }
+        boulderNumber: { type: integer, minimum: 1, maximum: 20 }
+        attempts: { type: integer, minimum: 0, maximum: 4 }
+        completed: { type: boolean }
+        actorName: { type: string }
+        actorUserId: { type: ["string", "null"] }
+        actorRole: { type: string, enum: [competitor, admin] }
+        previousRecordId: { type: ["string", "null"], format: uuid }
+        createdAt: { type: string, format: date-time }
+    AttemptLogResult:
+      type: object
+      required: [record, emailStatus]
+      properties:
+        record: { $ref: "#/components/schemas/AttemptRecord" }
+        emailStatus: { type: string, enum: [not_requested, sent, not_configured, failed] }
+    EventMonitor:
+      type: object
+      required: [event, scorecardCount, totalAttempts, scorecards]
+      properties:
+        event: { $ref: "#/components/schemas/Event" }
+        scorecardCount: { type: integer }
+        totalAttempts: { type: integer }
+        scorecards:
+          type: array
+          items: { $ref: "#/components/schemas/ScorecardSummary" }
+    ResultEntry:
+      type: object
+      required: [rank, climberName, squad, totalPoints, completedCount, attemptCount]
+      properties:
+        rank: { type: integer, minimum: 1 }
+        climberName: { type: string }
+        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, BethWall] }
+        totalPoints: { type: integer }
+        completedCount: { type: integer }
+        attemptCount: { type: integer }
+    ResultsResponse:
+      type: object
+      required: [event, results]
+      properties:
+        event: { $ref: "#/components/schemas/Event" }
+        results:
+          type: array
+          items: { $ref: "#/components/schemas/ResultEntry" }
+    AdminScorecard:
+      type: object
+      required: [scorecard, history]
+      properties:
+        scorecard: { $ref: "#/components/schemas/ScorecardDetail" }
+        history:
+          type: array
+          items: { $ref: "#/components/schemas/AttemptRecord" }
+    AccountProfileInput:
+      type: object
+      required: [email, displayName]
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
+        displayName: { type: string, minLength: 1, maxLength: 120 }
+    AccountProfile:
+      type: object
+      required: [clerkUserId, email, displayName, role, createdAt]
+      properties:
+        clerkUserId: { type: string }
+        email: { type: ["string", "null"], format: email }
+        displayName: { type: string }
+        role: { type: string, enum: [competitor, admin] }
+        createdAt: { type: string, format: date-time }
+    AccountScorecard:
+      type: object
+      required: [id, eventId, eventName, eventStatus, climberName, squad, createdAt, totalPoints, completedCount]
+      properties:
+        id: { type: string, format: uuid }
+        eventId: { type: string, format: uuid }
+        eventName: { type: string }
+        eventStatus: { type: string, enum: [draft, open, closed] }
+        climberName: { type: string }
+        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, BethWall] }
+        createdAt: { type: string, format: date-time }
+        totalPoints: { type: integer }
+        completedCount: { type: integer }
+    AccountRoleInput:
+      type: object
+      required: [role]
+      properties:
+        role: { type: string, enum: [competitor, admin] }
 
