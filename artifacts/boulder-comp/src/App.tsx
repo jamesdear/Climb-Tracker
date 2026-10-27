@@ -173,7 +173,7 @@ function Scorecard({scorecardId}:{scorecardId:string}) {
 function HistoryList({records}:{records:AttemptRecord[]}) { return <div className="history" data-testid="list-scorecard-history">{records.map(r=><div className="history-item" key={r.id} data-testid={`history-record-${r.id}`}><strong>Boulder {r.boulderNumber} · {r.completed?'topped':'attempted'}</strong><p className="muted" style={{margin:'5px 0'}}>{r.attempts} {r.attempts===1?'attempt':'attempts'} · {r.actorName} ({r.actorRole})</p><span className="mono" style={{fontSize:10,color:'#6b6b6b'}}>{new Date(r.createdAt).toLocaleString()}</span>{r.previousRecordId&&<span className="muted"> · correction</span>}</div>)}</div>;}
 
 function Results({eventId}:{eventId:string}) {
- const q=useGetPublicResults(eventId,{query:{queryKey:getGetPublicResultsQueryKey(eventId)}});
+ const q=useGetPublicResults(eventId,{query:{queryKey:getGetPublicResultsQueryKey(eventId),refetchInterval:10000}});
  return <Shell><main className="page">{q.isLoading?<Busy label="Checking final results"/>:q.isError||!q.data||!q.data.event.resultsReleased?<div className="panel" data-testid="results-unreleased"><h1 className="page-title">Results not yet released</h1><Link className="btn" href="/" data-testid="link-back-events">Back to events</Link></div>:<><span className="eyebrow">Final results</span><h1 className="page-title">{q.data.event.name}</h1><p className="muted">Final results · {q.data.event.eventDate?new Date(q.data.event.eventDate).toLocaleDateString():''}</p><div className="table-wrap" style={{marginTop:25}}><table><thead><tr><th>Place</th><th>Climber</th><th>Squad</th><th>Age</th><th>Score</th><th>Tops</th><th>Attempts</th></tr></thead><tbody>{q.data.results.map(r=><tr key={`${r.rank}-${r.climberName}`} data-testid={`row-result-${r.rank}`}><td className="mono">#{r.rank}</td><td><strong>{r.climberName}</strong></td><td>{r.squad.replace('Wall',' Wall')}</td><td>{bracketLabel(r.ageBracket)}</td><td className="mono">{r.totalPoints.toLocaleString()}</td><td>{r.completedCount}</td><td>{r.attemptCount}</td></tr>)}</tbody></table></div></>}</main></Shell>;
 }
 
@@ -224,7 +224,7 @@ function AdminEvent({eventId}:{eventId:string}) {
    <div className="tool-row">
     <button className="btn small" disabled={status.isPending||ev!.resultsReleased} onClick={()=>status.mutate({eventId,data:{status:ev!.status==='open'?'closed':'open'}},{onSuccess:()=>queryClient.invalidateQueries()})}>{ev!.status==='open'?'Close event':'Open event'}</button>
     <button className="btn outline small" disabled={ev!.resultsReleased} onClick={()=>setEditing(!editing)}>Edit setup</button>
-    <button className="btn coral small" disabled={ev!.resultsReleased||ev!.status!=='closed'||release.isPending} onClick={()=>{if(window.confirm('Release these final results publicly? Scores will be locked.'))release.mutate({eventId},{onSuccess:()=>queryClient.invalidateQueries()})}}>{ev!.resultsReleased?'Results released':'Release final results'}</button>
+    <button className="btn coral small" disabled={ev!.resultsReleased||ev!.status!=='closed'||release.isPending} onClick={()=>{if(window.confirm('Release these results publicly? Competitor scoring stays closed. Admin corrections will update the public results.'))release.mutate({eventId},{onSuccess:()=>queryClient.invalidateQueries()})}}>{ev!.resultsReleased?'Results released':'Release final results'}</button>
     <Link href={`/results/${eventId}`} className="btn outline small">View public results</Link>
    </div>
    {(status.isError||release.isError||update.isError)&&<p role="alert">The change could not be saved. Please retry.</p>}
@@ -256,6 +256,7 @@ function AdminCard({scorecardId}:{scorecardId:string}) {
   return <AdminGuard><AdminLayout title="Scorecard inspection">
     {q.isLoading?<div className="panel">Loading scorecard…</div>:q.isError||!card?<Failure retry={()=>q.refetch()}/>:<>
       <span className="eyebrow">Organizer corrections</span>
+      {card.eventStatus==='closed'&&<p className="muted">Scoring is closed for competitors. Admin corrections remain available and update any published results.</p>}
       <h2 className="display" style={{fontSize:26}}>{card.climberName} · {card.totalPoints} pts</h2>
       <p className="muted">
         {card.eventName} · {card.squad} · <span data-testid="text-admin-age-bracket">{bracketLabel(card.ageBracket)}</span>

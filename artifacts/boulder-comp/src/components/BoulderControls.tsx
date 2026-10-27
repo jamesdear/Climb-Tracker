@@ -122,10 +122,20 @@ export function BoulderControls({ scorecardId, boulder, readOnly, correctionMode
       onSaved?.(result);
       return true;
     } catch (e) {
-      const status = (e as { status?: number })?.status;
+      const apiError = e as { status?: number; data?: { error?: string } };
+      const status = apiError?.status;
       if (status === 409) {
         setError('This boulder was changed on another device. The latest result has been loaded. Check it and try again.');
         await refresh().catch(() => undefined);
+      } else if (status === 401) {
+        setError('Your session has expired. Sign in again before making this correction.');
+      } else if (status === 403) {
+        setError(apiError.data?.error || 'Scoring is closed. Only an administrator can make corrections from the organizer dashboard.');
+        await refresh().catch(() => undefined);
+      } else if (status && status >= 400 && status < 500) {
+        setError(apiError.data?.error || 'This change could not be saved. Refresh the scorecard and try again.');
+      } else if (status && status >= 500) {
+        setError('The server could not save this change. Please try again.');
       } else {
         setError('Could not save. Check your connection and try again.');
       }

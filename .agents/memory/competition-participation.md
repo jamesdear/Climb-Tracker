@@ -21,6 +21,12 @@ Attempt corrections must append attributed records rather than erase earlier sco
 
 **How to apply:** Preserve the full correction history when changing scoring behavior or adding new editing interfaces.
 
+Admins must be able to correct scorecards after closure and after results go public, while competitor scoring remains closed.
+
+**Why:** The user reports errors often become apparent only after results go live.
+
+**How to apply:** Publication is not an admin correction lock. Append attributed corrections and reflect them in public results.
+
 The product is called "LCC Intersquad Comp Series" and uses branding from https://londonclimbingcentres.co.uk/.
 
 **Why:** The user supplied the official name and brand reference.

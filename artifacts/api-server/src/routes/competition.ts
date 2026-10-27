@@ -26,6 +26,7 @@ import {
   userProfilesTable,
 } from "@workspace/db";
 import { logger } from "../lib/logger";
+import { canLogAttempt } from "../lib/scoring-permissions";
 import { ageBracket, eventYear } from "../lib/age-bracket";
 import {
   buildScorecardDetail,
@@ -274,10 +275,7 @@ router.post(
           .for("update")
           .limit(1);
         if (!lockedEvent) throw new ScorecardMissingError();
-        if (
-          lockedEvent.resultsReleased ||
-          (lockedEvent.status !== "open" && !isAdmin)
-        ) {
+        if (!canLogAttempt(lockedEvent, isAdmin)) {
           throw new EventClosedError();
         }
 
@@ -343,7 +341,7 @@ router.post(
       if (error instanceof EventClosedError) {
         res.status(403).json({
           error:
-            "This event is closed or its results are final. Ask an administrator for help.",
+            "Scoring is closed for this event. Only an administrator can make corrections. Sign in as an administrator and use the organizer dashboard.",
         });
         return;
       }
