@@ -1,0 +1,29 @@
+kind = "video"
+videoAspectRatio = "16:9"
+previewPath = "/results-demo/"
+title = "LCC public results walkthrough"
+description = "A short walkthrough of public event results, squad averages and category podiums in the LCC Intersquad Comp Series."
+version = "1.0.0"
+id = "artifacts/lcc-results-demo"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/results-demo/" ]
+localPort = 21697
+
+[services.development]
+run = "pnpm --filter @workspace/lcc-results-demo run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/lcc-results-demo", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/lcc-results-demo/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21697"
+BASE_PATH = "/results-demo/"

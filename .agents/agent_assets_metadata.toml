@@ -15,3 +15,11 @@ uri = "file://artifacts/lcc-admin-demo/public/audio/bg_music.mp3"
 type = "audio"
 title = "bg music"
 description = "Generated music: Calm confident corporate minimal electronic instrumental for a software admin walkthrough. Soft plucked synths, light percussion, 100 BPM, steady, clear accents every few seconds, re…"
+logical_id = "e5702830-e7a8-498b-a08f-20aabc38cb6d"
+
+[[outputs]]
+id = "QNDlXgvcZCiftZxDMinQS"
+uri = "file://artifacts/lcc-results-demo/public/audio/bg_music.mp3"
+type = "audio"
+title = "bg music"
+description = "Generated music: Bright minimal electronic instrumental for a short product walkthrough of sports competition results. Clean plucked synths, light percussion, 112 BPM, confident and calm. Clear accen…"
