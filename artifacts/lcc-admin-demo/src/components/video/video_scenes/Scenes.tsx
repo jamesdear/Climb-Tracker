@@ -133,10 +133,10 @@ export function SceneEvents() {
 }
 
 const SQUADS: { name: string; c: string; avg: number[]; n: number; z: number }[] = [
-  { name: 'Ravens Wall', c: '#047732', avg: [0, 41.2, 96.4], n: 14, z: 1 },
-  { name: 'Vaux Wall', c: '#009DDC', avg: [0, 44.7, 91.8], n: 11, z: 0 },
-  { name: 'Harro Wall', c: '#772055', avg: [0, 35.9, 84.3], n: 12, z: 2 },
-  { name: 'Croy Wall', c: '#52b93c', avg: [0, 31.2, 78.6], n: 9, z: 1 },
+  { name: 'RavensWall', c: '#047732', avg: [0, 41.2, 96.4], n: 14, z: 1 },
+  { name: 'VauxWall', c: '#009DDC', avg: [0, 44.7, 91.8], n: 11, z: 0 },
+  { name: 'HarroWall', c: '#772055', avg: [0, 35.9, 84.3], n: 12, z: 2 },
+  { name: 'CroyWall', c: '#52b93c', avg: [0, 31.2, 78.6], n: 9, z: 1 },
 ];
 function Squads({ step, live }: { step: number; live: string }) {
   const rows = [...SQUADS].sort((a, b) => b.avg[step] - a.avg[step]);
@@ -317,7 +317,7 @@ export function SceneAfter() {
         <div className="panel" style={{ padding: '3vh' }}>
           <span className="eb">Final results · public</span>
           <div style={{ font: "800 1.8vh 'Kumbh Sans'", textTransform: 'uppercase', margin: '1.6vh 0 1vh' }}>Squad standings</div>
-          {[['Ravens Wall', '#047732', 96.4, 96.4], ['Vaux Wall', '#009DDC', 91.8, 92.1], ['Harro Wall', '#772055', 84.3, 84.3], ['Croy Wall', '#52b93c', 78.6, 78.6]].map(([n, c, a, z]) => (
+          {[['RavensWall', '#047732', 96.4, 96.4], ['VauxWall', '#009DDC', 91.8, 92.1], ['HarroWall', '#772055', 84.3, 84.3], ['CroyWall', '#52b93c', 78.6, 78.6]].map(([n, c, a, z]) => (
             <div key={n as string} className="sq" style={{ borderLeftColor: c as string }}>
               <b /><strong>{n as string}</strong>
               <motion.b className="avg" animate={{ color: upd && a !== z ? ['#1d1d1b', '#F6A017', '#1d1d1b'] : '#1d1d1b' }} transition={{ duration: 1.4 }}>{(upd ? (z as number) : (a as number)).toFixed(1)}</motion.b>

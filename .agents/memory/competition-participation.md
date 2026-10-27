@@ -53,6 +53,8 @@ Squad event scores are the average of the squad's climber scores. Gender categor
 
 The fourth participating squad is CroyWall, not BethWall.
 
+All wall names use CamelCase without spaces: RavensWall, HarroWall, VauxWall, CroyWall. The spelling is RavensWall, not RanvensWall.
+
 **Why:** The user corrected the squad name throughout the product.
 
 **How to apply:** Use CroyWall in future examples, demos and participant-facing content; do not reintroduce the old squad from the original brief.

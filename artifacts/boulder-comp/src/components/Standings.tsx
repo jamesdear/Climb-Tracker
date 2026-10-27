@@ -8,7 +8,7 @@ export function genderLabel(gender: string | null | undefined): string {
   return 'Gender not provided';
 }
 
-const squadName = (s: string) => s.replace('Wall', ' Wall');
+const squadName = (s: string) => s;
 
 export function SquadStandings({ squads }: { squads: SquadResult[] }) {
   if (!squads.length) return <div className="empty" data-testid="empty-squads">No squad scores yet.</div>;

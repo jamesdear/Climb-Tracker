@@ -8,7 +8,7 @@ Treatment: instructional, brand-faithful (Kumbh Sans + Space Mono, #F6A017/#009D
 | 3 | 10.5–17.5 s | Open & monitor | Copy event link, Open event, counters 0→23→46 / 874, squad averages incl. zero-score climbers re-rank; camera push to standings |
 | 4 | 17.5–24.5 s | Inspect & correct | Scorecard inspection, Boulder 07 organizer correction 2→3 total attempts, Confirm completed (0→4 pts, scorecard 97→101), new attributed history record on top |
 | 5 | 24.5–32.5 s | Close, then release | Close event → status closed → Release final results → confirm dialog (app copy) → Results released, "Published results" |
-| 6 | 32.5–38.5 s | Fix after release | Append-only history gains admin correction; public squad standings update (Sam Reyes, Vaux Wall: B14 3→2 attempts = 4→7 pts, +3 ÷ 11 climbers → avg 91.8→92.1) |
+| 6 | 32.5–38.5 s | Fix after release | Append-only history gains admin correction; public squad standings update (Sam Reyes, VauxWall: B14 3→2 attempts = 4→7 pts, +3 ÷ 11 climbers → avg 91.8→92.1) |
 | 7 | 38.5–43 s | Accounts & roles | Make organizer → role admin |
 | 8 | 43–46 s | End | Charcoal wipe, logo, series name |
 

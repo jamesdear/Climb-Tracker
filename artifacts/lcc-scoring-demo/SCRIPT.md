@@ -4,7 +4,7 @@ Treatment: factual, minimal. Charcoal/cream app world with LCC orange + cyan acc
 | # | Time | Shot | Content |
 |---|---|---|---|
 | 1 qr | 0–5 s | Wide: printed event QR poster at wall left; phone slides in, camera viewfinder locks onto QR, scan line, link chip pops | "01 Scan the event QR" / "Opens the scorecard. No sign-in." |
-| 2 setup | 5–12 s | Phone right, caption left. Scorecard details fields type in one per ~0.6 s: name, year 2013 → "Under 15 · age 13 at 31 December 2026", gender W+, home wall Vaux Wall, untick self → supervisor name, optional email, consent tick, Create scorecard press | "02 Scorecard details" |
+| 2 setup | 5–12 s | Phone right, caption left. Scorecard details fields type in one per ~0.6 s: name, year 2013 → "Under 15 · age 13 at 31 December 2026", gender W+, home wall VauxWall, untick self → supervisor name, optional email, consent tick, Create scorecard press | "02 Scorecard details" |
 | 3 card | 12–16.5 s | Phone centred-left, caption right. Score header 0 PTS, 20-boulder grid, tap on 07 ripples | "03 Pick a boulder number" |
 | 4 failed | 16.5–21.5 s | Sheet rises; + tapped twice (0→1→2), "Saved." after each | "04 Failed attempts save as you tap" |
 | 5 complete | 21.5–27.5 s | Thumb drags slider left→right; confirm panel "Total attempts including the completing attempt" shows 3; Confirm completed → grid 07 green, total 4 PTS | "05 Slide to complete, confirm total" |

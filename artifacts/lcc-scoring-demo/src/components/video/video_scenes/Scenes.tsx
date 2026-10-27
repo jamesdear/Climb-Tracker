@@ -104,7 +104,7 @@ export function SceneSetup() {
           <div className="help">{s >= 6 ? <b style={{ color: '#047732' }}>Under 15 · age 13 at 31 December 2026</b> : 'Age at 31 December 2026'}</div></div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1vh' }}>
           <div className="fld"><label>Gender category</label><div className={field(s >= 8 && s < 10)}>{s >= 9 ? 'W+' : <span style={{ color: '#aaa' }}>Choose</span>}</div></div>
-          <div className="fld"><label>Home wall</label><div className={field(s >= 10 && s < 12)}>{s >= 11 ? 'Vaux Wall' : 'Ravens Wall'}</div></div>
+          <div className="fld"><label>Home wall</label><div className={field(s >= 10 && s < 12)}>{s >= 11 ? 'VauxWall' : 'RavensWall'}</div></div>
         </div>
         <div className="chk"><div className={`box ${supervisor ? '' : 'on'}`}>✓</div><span>I am the climber and will log my own results.</span></div>
         {supervisor && <motion.div className="fld" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}><label>Supervisor name</label><div className={field(s < 18)}>{TYPE('Sam Okafor', s, 15)}</div></motion.div>}
@@ -123,7 +123,7 @@ function Card({ seven, tapped, total, history }: { seven: Bd; tapped?: boolean; 
   return <div style={{ padding: '1.4vh 2vh' }}>
     <span className="eb">Intersquad Comp · Round 2</span>
     <div style={{ font: "600 3.4vh 'Kumbh Sans'", letterSpacing: '-.05em', margin: '.4vh 0' }}>Maya Okafor</div>
-    <div className="note" style={{ marginTop: 0 }}>Vaux Wall · Under 15 · W+ · Supervisor: Sam Okafor</div>
+    <div className="note" style={{ marginTop: 0 }}>VauxWall · Under 15 · W+ · Supervisor: Sam Okafor</div>
     <div className="shead"><div><div className="sub">TOTAL</div><div className="big">{total} <span className="sub">PTS</span></div></div>
       <div style={{ textAlign: 'right' }}><div className="sub">COMPLETED</div><div className="big" style={{ fontSize: '2.8vh' }}>{seven.done ? 1 : 0}<span className="sub"> / 20</span></div></div></div>
     {history ?? <><div className="note" style={{ marginBottom: '.8vh' }}>Select a boulder number.</div>
