@@ -47,7 +47,7 @@ router.get("/events/open", async (_req, res): Promise<void> => {
   res.json(events.map(toEvent));
 });
 
-router.get("/events/:eventId/scorecards", async (req, res): Promise<void> => {
+router.post("/events/:eventId/scorecards", async (req, res): Promise<void> => {
   const params = CreateScorecardParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });

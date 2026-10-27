@@ -31,7 +31,7 @@ async function syncAccountProfile(
   );
   const email =
     primaryEmail?.verification?.status === "verified"
-      ? primaryEmail.emailAddress
+      ? primaryEmail.emailAddress.toLowerCase()
       : null;
   const displayName =
     [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ") ||

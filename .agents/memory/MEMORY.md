@@ -1,0 +1,1 @@
+- [Competition participation](competition-participation.md) — informal QR entry, parent loggers, and attributed append-only scoring are core requirements.
