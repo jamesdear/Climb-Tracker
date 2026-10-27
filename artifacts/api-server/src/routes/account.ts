@@ -145,6 +145,7 @@ router.get(
           eventStatus: loaded.detail.eventStatus,
           climberName: loaded.detail.climberName,
           ageBracket: loaded.detail.ageBracket,
+          gender: loaded.detail.gender,
           squad: loaded.detail.squad,
           createdAt: loaded.detail.createdAt,
           totalPoints: loaded.detail.totalPoints,

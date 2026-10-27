@@ -5,10 +5,15 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { CategoryPodium } from './categoryPodium';
 import type { Event } from './event';
 import type { ResultEntry } from './resultEntry';
+import type { SquadResult } from './squadResult';
 
 export interface ResultsResponse {
+  uncategorizedCount: number;
+  squads: SquadResult[];
+  podiums: CategoryPodium[];
   event: Event;
   results: ResultEntry[];
 }

@@ -8,9 +8,12 @@
 import type { BoulderState } from './boulderState';
 import type { ScorecardDetailAgeBracket } from './scorecardDetailAgeBracket';
 import type { ScorecardDetailEventStatus } from './scorecardDetailEventStatus';
+import type { ScorecardDetailGender } from './scorecardDetailGender';
 import type { ScorecardDetailSquad } from './scorecardDetailSquad';
 
 export interface ScorecardDetail {
+  /** @nullable */
+  gender?: ScorecardDetailGender;
   /** @nullable */
   birthYear?: number | null;
   /** @nullable */

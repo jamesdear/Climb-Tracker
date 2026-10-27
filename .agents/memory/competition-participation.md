@@ -44,3 +44,9 @@ Collect year of birth, not full birth date. Age brackets use age at calendar yea
 **Why:** The user selected year of birth and calendar year end as the age cutoff.
 
 **How to apply:** Use the event year consistently for bracket calculation; keep birth year off public standings.
+
+Squad event scores are the average of the squad's climber scores. Gender categories are exactly “O” and “W+”; event podiums are split by age bracket and gender.
+
+**Why:** The user requested the squad competition and a series-progress page showing category podiums for each event.
+
+**How to apply:** Include zero-score entrants in the squad average, display participant counts, and do not infer missing genders. Do not invent a cumulative series scoring formula.

@@ -1,5 +1,6 @@
 import { and, desc, eq } from "drizzle-orm";
 import { ageBracket, eventYear } from "./age-bracket";
+import { rankClimbers, summarizeStandings } from "./standings";
 import {
   attemptRecordsTable,
   db,
@@ -67,6 +68,7 @@ export function buildScorecardDetail(
     eventStatus: event.status,
     climberName: scorecard.climberName,
     birthYear: scorecard.birthYear,
+    gender: scorecard.gender,
     ageBracket: ageBracket(scorecard.birthYear, eventYear(event)),
     squad: scorecard.squad,
     isClimber: scorecard.isClimber,
@@ -86,6 +88,7 @@ export function buildScorecardSummary(
     id: detail.id,
     climberName: detail.climberName,
     ageBracket: detail.ageBracket,
+    gender: detail.gender,
     squad: detail.squad,
     loggerName: detail.loggerName,
     createdAt: detail.createdAt,
@@ -157,6 +160,7 @@ export async function eventResults(event: Event) {
       return {
         climberName: scorecard.climberName,
         ageBracket: ageBracket(scorecard.birthYear, eventYear(event)),
+        gender: scorecard.gender,
         squad: scorecard.squad,
         totalPoints: boulders.reduce((total, boulder) => total + boulder.points, 0),
         completedCount: boulders.filter((boulder) => boulder.completed).length,
@@ -168,17 +172,10 @@ export async function eventResults(event: Event) {
     }),
   );
 
-  rows.sort(
-    (a, b) =>
-      b.totalPoints - a.totalPoints ||
-      b.completedCount - a.completedCount ||
-      a.attemptCount - b.attemptCount ||
-      a.climberName.localeCompare(b.climberName),
-  );
-
   return {
     event: toEvent(event),
-    results: rows.map((row, index) => ({ rank: index + 1, ...row })),
+    results: rankClimbers(rows),
+    ...summarizeStandings(rows),
   };
 }
 

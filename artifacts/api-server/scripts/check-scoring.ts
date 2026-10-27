@@ -15,7 +15,7 @@ async function post(path: string, data: unknown) {
 try {
   const input = {
     climberName: "Temporary API verification",
-    birthYear: 2013, squad: "VauxWall", isClimber: false,
+    birthYear: 2013, gender: "O", squad: "VauxWall", isClimber: false,
     loggerName: "Test supervisor", acceptedTerms: true,
   };
   for (const birthYear of [2027, 2009]) {

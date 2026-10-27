@@ -19,6 +19,18 @@ tags:
   - name: admin
     description: Administrator operations
 paths:
+  /series:
+    get:
+      operationId: getSeriesProgress
+      tags: [events]
+      summary: Public series progress and released category podiums
+      responses:
+        "200":
+          description: Events with standings only when released
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SeriesProgress"
   /healthz:
     get:
       operationId: healthCheck
@@ -502,8 +514,9 @@ components:
         status: { type: string, enum: [open, closed] }
     ScorecardRegistrationInput:
       type: object
-      required: [climberName, birthYear, squad, isClimber, acceptedTerms]
+      required: [climberName, birthYear, gender, squad, isClimber, acceptedTerms]
       properties:
+        gender: { type: string, enum: [O, W+] }
         birthYear: { type: integer, minimum: 1900, maximum: 2100 }
         climberName: { type: string, minLength: 1, maxLength: 120 }
         squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, BethWall] }
@@ -525,6 +538,7 @@ components:
       type: object
       required: [id, eventId, eventName, eventStatus, climberName, squad, isClimber, loggerName, email, createdAt, totalPoints, completedCount, boulders]
       properties:
+        gender: { type: ["string", "null"], enum: [O, W+, null] }
         birthYear: { type: ["integer", "null"] }
         ageBracket: { type: ["string", "null"], enum: [U13, U15, U17, null] }
         id: { type: string, format: uuid }
@@ -546,6 +560,7 @@ components:
       type: object
       required: [id, climberName, squad, loggerName, createdAt, totalPoints, completedCount, attemptCount]
       properties:
+        gender: { type: ["string", "null"], enum: [O, W+, null] }
         ageBracket: { type: ["string", "null"], enum: [U13, U15, U17, null] }
         id: { type: string, format: uuid }
         climberName: { type: string }
@@ -584,8 +599,11 @@ components:
         emailStatus: { type: string, enum: [not_requested, sent, not_configured, failed] }
     EventMonitor:
       type: object
-      required: [event, scorecardCount, totalAttempts, scorecards]
+      required: [event, scorecardCount, totalAttempts, scorecards, squads]
       properties:
+        squads:
+          type: array
+          items: { $ref: "#/components/schemas/SquadResult" }
         event: { $ref: "#/components/schemas/Event" }
         scorecardCount: { type: integer }
         totalAttempts: { type: integer }
@@ -596,6 +614,7 @@ components:
       type: object
       required: [rank, climberName, squad, totalPoints, completedCount, attemptCount]
       properties:
+        gender: { type: ["string", "null"], enum: [O, W+, null] }
         ageBracket: { type: ["string", "null"], enum: [U13, U15, U17, null] }
         rank: { type: integer, minimum: 1 }
         climberName: { type: string }
@@ -605,8 +624,15 @@ components:
         attemptCount: { type: integer }
     ResultsResponse:
       type: object
-      required: [event, results]
+      required: [event, results, squads, podiums, uncategorizedCount]
       properties:
+        uncategorizedCount: { type: integer }
+        squads:
+          type: array
+          items: { $ref: "#/components/schemas/SquadResult" }
+        podiums:
+          type: array
+          items: { $ref: "#/components/schemas/CategoryPodium" }
         event: { $ref: "#/components/schemas/Event" }
         results:
           type: array
@@ -638,6 +664,7 @@ components:
       type: object
       required: [id, eventId, eventName, eventStatus, climberName, squad, createdAt, totalPoints, completedCount]
       properties:
+        gender: { type: ["string", "null"], enum: [O, W+, null] }
         ageBracket: { type: ["string", "null"], enum: [U13, U15, U17, null] }
         id: { type: string, format: uuid }
         eventId: { type: string, format: uuid }
@@ -653,4 +680,42 @@ components:
       required: [role]
       properties:
         role: { type: string, enum: [competitor, admin] }
+    SquadResult:
+      type: object
+      required: [squad, rank, climberCount, totalPoints, averageScore]
+      properties:
+        squad: { type: string, enum: [RavensWall, HarroWall, VauxWall, BethWall] }
+        rank: { type: ["integer", "null"] }
+        climberCount: { type: integer }
+        totalPoints: { type: integer }
+        averageScore: { type: ["number", "null"] }
+    CategoryPodium:
+      type: object
+      required: [ageBracket, gender, climberCount, places]
+      properties:
+        ageBracket: { type: string, enum: [U13, U15, U17] }
+        gender: { type: string, enum: [O, W+] }
+        climberCount: { type: integer }
+        places:
+          type: array
+          items: { $ref: "#/components/schemas/ResultEntry" }
+    SeriesEvent:
+      type: object
+      required: [event, squads, podiums, uncategorizedCount]
+      properties:
+        event: { $ref: "#/components/schemas/Event" }
+        uncategorizedCount: { type: integer }
+        squads:
+          type: array
+          items: { $ref: "#/components/schemas/SquadResult" }
+        podiums:
+          type: array
+          items: { $ref: "#/components/schemas/CategoryPodium" }
+    SeriesProgress:
+      type: object
+      required: [events]
+      properties:
+        events:
+          type: array
+          items: { $ref: "#/components/schemas/SeriesEvent" }
 

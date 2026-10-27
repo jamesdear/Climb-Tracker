@@ -6,9 +6,12 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { ScorecardSummaryAgeBracket } from './scorecardSummaryAgeBracket';
+import type { ScorecardSummaryGender } from './scorecardSummaryGender';
 import type { ScorecardSummarySquad } from './scorecardSummarySquad';
 
 export interface ScorecardSummary {
+  /** @nullable */
+  gender?: ScorecardSummaryGender;
   /** @nullable */
   ageBracket?: ScorecardSummaryAgeBracket;
   id: string;

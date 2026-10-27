@@ -9,6 +9,57 @@ import * as zod from 'zod';
 
 
 /**
+ * @summary Public series progress and released category podiums
+ */
+export const getSeriesProgressResponseEventsItemEventPointsByAttemptsItemMin = 0;
+
+export const getSeriesProgressResponseEventsItemEventPointsByAttemptsMin = 4;
+export const getSeriesProgressResponseEventsItemEventPointsByAttemptsMax = 4;
+
+
+
+
+export const GetSeriesProgressResponse = zod.object({
+  "events": zod.array(zod.object({
+  "event": zod.object({
+  "id": zod.string().uuid(),
+  "name": zod.string(),
+  "eventDate": zod.coerce.date().nullable(),
+  "status": zod.enum(['draft', 'open', 'closed']),
+  "boulderCount": zod.literal(20),
+  "maxAttempts": zod.literal(4),
+  "pointsByAttempts": zod.array(zod.number().int().min(getSeriesProgressResponseEventsItemEventPointsByAttemptsItemMin)).min(getSeriesProgressResponseEventsItemEventPointsByAttemptsMin).max(getSeriesProgressResponseEventsItemEventPointsByAttemptsMax),
+  "resultsReleased": zod.boolean(),
+  "createdAt": zod.coerce.date()
+}),
+  "uncategorizedCount": zod.number().int(),
+  "squads": zod.array(zod.object({
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "rank": zod.number().int().nullable(),
+  "climberCount": zod.number().int(),
+  "totalPoints": zod.number().int(),
+  "averageScore": zod.number().nullable()
+})),
+  "podiums": zod.array(zod.object({
+  "ageBracket": zod.enum(['U13', 'U15', 'U17']),
+  "gender": zod.enum(['O', 'W+']),
+  "climberCount": zod.number().int(),
+  "places": zod.array(zod.object({
+  "gender": zod.union([zod.literal('O'),zod.literal('W+'),zod.literal(null)]).nullish(),
+  "ageBracket": zod.union([zod.literal('U13'),zod.literal('U15'),zod.literal('U17'),zod.literal(null)]).nullish(),
+  "rank": zod.number().int().min(1),
+  "climberName": zod.string(),
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "totalPoints": zod.number().int(),
+  "completedCount": zod.number().int(),
+  "attemptCount": zod.number().int()
+}))
+}))
+}))
+})
+
+
+/**
  * Returns server health status
  * @summary Health check
  */
@@ -87,6 +138,7 @@ export const createScorecardBodyEmailMax = 254;
 
 
 export const CreateScorecardBody = zod.object({
+  "gender": zod.enum(['O', 'W+']),
   "birthYear": zod.number().int().min(createScorecardBodyBirthYearMin).max(createScorecardBodyBirthYearMax),
   "climberName": zod.string().min(1).max(createScorecardBodyClimberNameMax),
   "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
@@ -106,6 +158,7 @@ export const createScorecardResponseBouldersItemPointsMin = 0;
 
 
 export const CreateScorecardResponse = zod.object({
+  "gender": zod.union([zod.literal('O'),zod.literal('W+'),zod.literal(null)]).nullish(),
   "birthYear": zod.number().int().nullish(),
   "ageBracket": zod.union([zod.literal('U13'),zod.literal('U15'),zod.literal('U17'),zod.literal(null)]).nullish(),
   "id": zod.string().uuid(),
@@ -148,6 +201,7 @@ export const getScorecardResponseBouldersItemPointsMin = 0;
 
 
 export const GetScorecardResponse = zod.object({
+  "gender": zod.union([zod.literal('O'),zod.literal('W+'),zod.literal(null)]).nullish(),
   "birthYear": zod.number().int().nullish(),
   "ageBracket": zod.union([zod.literal('U13'),zod.literal('U15'),zod.literal('U17'),zod.literal(null)]).nullish(),
   "id": zod.string().uuid(),
@@ -256,6 +310,7 @@ export const GetPublicResultsParams = zod.object({
   "eventId": zod.coerce.string().uuid()
 })
 
+
 export const getPublicResultsResponseEventPointsByAttemptsItemMin = 0;
 
 export const getPublicResultsResponseEventPointsByAttemptsMin = 4;
@@ -265,6 +320,29 @@ export const getPublicResultsResponseEventPointsByAttemptsMax = 4;
 
 
 export const GetPublicResultsResponse = zod.object({
+  "uncategorizedCount": zod.number().int(),
+  "squads": zod.array(zod.object({
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "rank": zod.number().int().nullable(),
+  "climberCount": zod.number().int(),
+  "totalPoints": zod.number().int(),
+  "averageScore": zod.number().nullable()
+})),
+  "podiums": zod.array(zod.object({
+  "ageBracket": zod.enum(['U13', 'U15', 'U17']),
+  "gender": zod.enum(['O', 'W+']),
+  "climberCount": zod.number().int(),
+  "places": zod.array(zod.object({
+  "gender": zod.union([zod.literal('O'),zod.literal('W+'),zod.literal(null)]).nullish(),
+  "ageBracket": zod.union([zod.literal('U13'),zod.literal('U15'),zod.literal('U17'),zod.literal(null)]).nullish(),
+  "rank": zod.number().int().min(1),
+  "climberName": zod.string(),
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "totalPoints": zod.number().int(),
+  "completedCount": zod.number().int(),
+  "attemptCount": zod.number().int()
+}))
+})),
   "event": zod.object({
   "id": zod.string().uuid(),
   "name": zod.string(),
@@ -277,6 +355,7 @@ export const GetPublicResultsResponse = zod.object({
   "createdAt": zod.coerce.date()
 }),
   "results": zod.array(zod.object({
+  "gender": zod.union([zod.literal('O'),zod.literal('W+'),zod.literal(null)]).nullish(),
   "ageBracket": zod.union([zod.literal('U13'),zod.literal('U15'),zod.literal('U17'),zod.literal(null)]).nullish(),
   "rank": zod.number().int().min(1),
   "climberName": zod.string(),
@@ -327,6 +406,7 @@ export const GetMyAccountResponse = zod.object({
  * @summary List scorecards linked to the signed-in user's account
  */
 export const ListMyScorecardsResponseItem = zod.object({
+  "gender": zod.union([zod.literal('O'),zod.literal('W+'),zod.literal(null)]).nullish(),
   "ageBracket": zod.union([zod.literal('U13'),zod.literal('U15'),zod.literal('U17'),zod.literal(null)]).nullish(),
   "id": zod.string().uuid(),
   "eventId": zod.string().uuid(),
@@ -491,6 +571,13 @@ export const getEventMonitorResponseEventPointsByAttemptsMax = 4;
 
 
 export const GetEventMonitorResponse = zod.object({
+  "squads": zod.array(zod.object({
+  "squad": zod.enum(['RavensWall', 'HarroWall', 'VauxWall', 'BethWall']),
+  "rank": zod.number().int().nullable(),
+  "climberCount": zod.number().int(),
+  "totalPoints": zod.number().int(),
+  "averageScore": zod.number().nullable()
+})),
   "event": zod.object({
   "id": zod.string().uuid(),
   "name": zod.string(),
@@ -505,6 +592,7 @@ export const GetEventMonitorResponse = zod.object({
   "scorecardCount": zod.number().int(),
   "totalAttempts": zod.number().int(),
   "scorecards": zod.array(zod.object({
+  "gender": zod.union([zod.literal('O'),zod.literal('W+'),zod.literal(null)]).nullish(),
   "ageBracket": zod.union([zod.literal('U13'),zod.literal('U15'),zod.literal('U17'),zod.literal(null)]).nullish(),
   "id": zod.string().uuid(),
   "climberName": zod.string(),
@@ -526,6 +614,7 @@ export const ListEventScorecardsParams = zod.object({
 })
 
 export const ListEventScorecardsResponseItem = zod.object({
+  "gender": zod.union([zod.literal('O'),zod.literal('W+'),zod.literal(null)]).nullish(),
   "ageBracket": zod.union([zod.literal('U13'),zod.literal('U15'),zod.literal('U17'),zod.literal(null)]).nullish(),
   "id": zod.string().uuid(),
   "climberName": zod.string(),
@@ -562,6 +651,7 @@ export const getAdminScorecardResponseHistoryItemAttemptsMax = 4;
 
 export const GetAdminScorecardResponse = zod.object({
   "scorecard": zod.object({
+  "gender": zod.union([zod.literal('O'),zod.literal('W+'),zod.literal(null)]).nullish(),
   "birthYear": zod.number().int().nullish(),
   "ageBracket": zod.union([zod.literal('U13'),zod.literal('U15'),zod.literal('U17'),zod.literal(null)]).nullish(),
   "id": zod.string().uuid(),

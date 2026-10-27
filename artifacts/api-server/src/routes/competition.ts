@@ -14,6 +14,7 @@ import {
   GetScorecardHistoryResponse,
   GetScorecardParams,
   GetScorecardResponse,
+  GetSeriesProgressResponse,
   LogAttemptRecordBody,
   LogAttemptRecordParams,
   LogAttemptRecordResponse,
@@ -39,6 +40,18 @@ import {
 const router: IRouter = Router();
 const connectors = new ReplitConnectors();
 const TERMS_VERSION = "2026-10";
+
+router.get("/series", async (_req, res): Promise<void> => {
+  const events = await db.select().from(eventsTable).orderBy(desc(eventsTable.eventDate));
+  const progress = await Promise.all(events.map(async event => {
+    if (!event.resultsReleased) {
+      return { event: toEvent(event), squads: [], podiums: [], uncategorizedCount: 0 };
+    }
+    const { squads, podiums, uncategorizedCount } = await eventResults(event);
+    return { event: toEvent(event), squads, podiums, uncategorizedCount };
+  }));
+  res.json(GetSeriesProgressResponse.parse({ events: progress }));
+});
 
 router.get("/events/open", async (_req, res): Promise<void> => {
   const events = await db
@@ -92,6 +105,7 @@ router.post("/events/:eventId/scorecards", async (req, res): Promise<void> => {
       eventId: event.id,
       climberName: registration.climberName.trim(),
       birthYear: registration.birthYear,
+      gender: registration.gender,
       squad: registration.squad,
       isClimber: registration.isClimber,
       loggerName: registration.isClimber

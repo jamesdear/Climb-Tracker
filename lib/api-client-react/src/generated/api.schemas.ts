@@ -94,6 +94,14 @@ export interface EventStatusInput {
   status: EventStatusInputStatus;
 }
 
+export type ScorecardRegistrationInputGender = typeof ScorecardRegistrationInputGender[keyof typeof ScorecardRegistrationInputGender];
+
+
+export const ScorecardRegistrationInputGender = {
+  O: 'O',
+  'W+': 'W+',
+} as const;
+
 export type ScorecardRegistrationInputSquad = typeof ScorecardRegistrationInputSquad[keyof typeof ScorecardRegistrationInputSquad];
 
 
@@ -105,6 +113,7 @@ export const ScorecardRegistrationInputSquad = {
 } as const;
 
 export interface ScorecardRegistrationInput {
+  gender: ScorecardRegistrationInputGender;
   /**
      * @minimum 1900
      * @maximum 2100
@@ -147,6 +156,17 @@ export interface BoulderState {
 /**
  * @nullable
  */
+export type ScorecardDetailGender = typeof ScorecardDetailGender[keyof typeof ScorecardDetailGender] | null;
+
+
+export const ScorecardDetailGender = {
+  O: 'O',
+  'W+': 'W+',
+} as const;
+
+/**
+ * @nullable
+ */
 export type ScorecardDetailAgeBracket = typeof ScorecardDetailAgeBracket[keyof typeof ScorecardDetailAgeBracket] | null;
 
 
@@ -177,6 +197,8 @@ export const ScorecardDetailSquad = {
 
 export interface ScorecardDetail {
   /** @nullable */
+  gender?: ScorecardDetailGender;
+  /** @nullable */
   birthYear?: number | null;
   /** @nullable */
   ageBracket?: ScorecardDetailAgeBracket;
@@ -196,6 +218,17 @@ export interface ScorecardDetail {
   completedCount: number;
   boulders: BoulderState[];
 }
+
+/**
+ * @nullable
+ */
+export type ScorecardSummaryGender = typeof ScorecardSummaryGender[keyof typeof ScorecardSummaryGender] | null;
+
+
+export const ScorecardSummaryGender = {
+  O: 'O',
+  'W+': 'W+',
+} as const;
 
 /**
  * @nullable
@@ -220,6 +253,8 @@ export const ScorecardSummarySquad = {
 } as const;
 
 export interface ScorecardSummary {
+  /** @nullable */
+  gender?: ScorecardSummaryGender;
   /** @nullable */
   ageBracket?: ScorecardSummaryAgeBracket;
   id: string;
@@ -290,12 +325,44 @@ export interface AttemptLogResult {
   emailStatus: AttemptLogResultEmailStatus;
 }
 
+export type SquadResultSquad = typeof SquadResultSquad[keyof typeof SquadResultSquad];
+
+
+export const SquadResultSquad = {
+  RavensWall: 'RavensWall',
+  HarroWall: 'HarroWall',
+  VauxWall: 'VauxWall',
+  BethWall: 'BethWall',
+} as const;
+
+export interface SquadResult {
+  squad: SquadResultSquad;
+  /** @nullable */
+  rank: number | null;
+  climberCount: number;
+  totalPoints: number;
+  /** @nullable */
+  averageScore: number | null;
+}
+
 export interface EventMonitor {
+  squads: SquadResult[];
   event: Event;
   scorecardCount: number;
   totalAttempts: number;
   scorecards: ScorecardSummary[];
 }
+
+/**
+ * @nullable
+ */
+export type ResultEntryGender = typeof ResultEntryGender[keyof typeof ResultEntryGender] | null;
+
+
+export const ResultEntryGender = {
+  O: 'O',
+  'W+': 'W+',
+} as const;
 
 /**
  * @nullable
@@ -321,6 +388,8 @@ export const ResultEntrySquad = {
 
 export interface ResultEntry {
   /** @nullable */
+  gender?: ResultEntryGender;
+  /** @nullable */
   ageBracket?: ResultEntryAgeBracket;
   /** @minimum 1 */
   rank: number;
@@ -331,7 +400,34 @@ export interface ResultEntry {
   attemptCount: number;
 }
 
+export type CategoryPodiumAgeBracket = typeof CategoryPodiumAgeBracket[keyof typeof CategoryPodiumAgeBracket];
+
+
+export const CategoryPodiumAgeBracket = {
+  U13: 'U13',
+  U15: 'U15',
+  U17: 'U17',
+} as const;
+
+export type CategoryPodiumGender = typeof CategoryPodiumGender[keyof typeof CategoryPodiumGender];
+
+
+export const CategoryPodiumGender = {
+  O: 'O',
+  'W+': 'W+',
+} as const;
+
+export interface CategoryPodium {
+  ageBracket: CategoryPodiumAgeBracket;
+  gender: CategoryPodiumGender;
+  climberCount: number;
+  places: ResultEntry[];
+}
+
 export interface ResultsResponse {
+  uncategorizedCount: number;
+  squads: SquadResult[];
+  podiums: CategoryPodium[];
   event: Event;
   results: ResultEntry[];
 }
@@ -371,6 +467,17 @@ export interface AccountProfile {
 /**
  * @nullable
  */
+export type AccountScorecardGender = typeof AccountScorecardGender[keyof typeof AccountScorecardGender] | null;
+
+
+export const AccountScorecardGender = {
+  O: 'O',
+  'W+': 'W+',
+} as const;
+
+/**
+ * @nullable
+ */
 export type AccountScorecardAgeBracket = typeof AccountScorecardAgeBracket[keyof typeof AccountScorecardAgeBracket] | null;
 
 
@@ -401,6 +508,8 @@ export const AccountScorecardSquad = {
 
 export interface AccountScorecard {
   /** @nullable */
+  gender?: AccountScorecardGender;
+  /** @nullable */
   ageBracket?: AccountScorecardAgeBracket;
   id: string;
   eventId: string;
@@ -423,5 +532,16 @@ export const AccountRoleInputRole = {
 
 export interface AccountRoleInput {
   role: AccountRoleInputRole;
+}
+
+export interface SeriesEvent {
+  event: Event;
+  uncategorizedCount: number;
+  squads: SquadResult[];
+  podiums: CategoryPodium[];
+}
+
+export interface SeriesProgress {
+  events: SeriesEvent[];
 }
 

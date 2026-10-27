@@ -4,7 +4,7 @@ import { ClerkProvider, SignIn, SignUp, useClerk, useUser } from '@clerk/react';
 import { publishableKeyFromHost } from '@clerk/react/internal';
 import { shadcn } from '@clerk/themes';
 import { Route, Switch, Link, useLocation, Router as WouterRouter } from 'wouter';
-import { Activity, ArrowRight, Check, Copy, ExternalLink, Mountain, Plus, Users } from 'lucide-react';
+import { Activity, ArrowRight, Check, Copy, ExternalLink, Mountain, Plus, Trophy, Users } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import {
   useListOpenEvents, useGetPublicEvent, useCreateScorecard, useGetScorecard, useGetScorecardHistory,
@@ -13,10 +13,13 @@ import {
   useListAdminUsers, useUpdateAccountRole, useListMyScorecards,
   getListOpenEventsQueryKey, getGetPublicEventQueryKey, getGetScorecardQueryKey, getGetScorecardHistoryQueryKey,
   getGetPublicResultsQueryKey, getGetMyAccountQueryKey, getListAdminEventsQueryKey, getGetEventMonitorQueryKey,
-  getListEventScorecardsQueryKey, getGetAdminScorecardQueryKey, getListAdminUsersQueryKey, getListMyScorecardsQueryKey,
+  getListEventScorecardsQueryKey, getGetAdminScorecardQueryKey, getListAdminUsersQueryKey, getListMyScorecardsQueryKey, getGetSeriesProgressQueryKey,
 } from '@workspace/api-client-react';
 import type { EventInput, BoulderState, AttemptRecord, AttemptLogResult } from '@workspace/api-client-react';
 import { BoulderControls } from './components/BoulderControls';
+import { Logo, Shell, Status, Busy, Failure } from './components/layout';
+import { SquadStandings, CategoryPodiums, UncategorizedNote, genderLabel } from './components/Standings';
+import { SeriesPage } from './pages/Series';
 import { bracketFor, bracketLabel, eventYear } from './lib/age';
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 8_000 } } });
@@ -46,22 +49,6 @@ const appearance = {
   },
 };
 
-function Logo() {
-  return (
-    <Link href="/" className="brand" data-testid="link-home">
-      <img className="brand-logo" src={`${basePath}/lcc-logo.svg`} alt="London Climbing Centres"/>
-      <span className="brand-name"><span>Intersquad</span><span>Comp Series</span></span>
-    </Link>
-  );
-}
-function Shell({ children }: { children: ReactNode }) {
-  const { isSignedIn } = useUser();
-  const { signOut } = useClerk();
-  return <div className="shell"><div className="wrap"><header className="topbar"><Logo/><nav className="navlinks"><Link href="/" data-testid="link-events">Events</Link>{isSignedIn?<><Link href="/my-scorecards" data-testid="link-my-scorecards">My scorecards</Link><button className="nav-button" onClick={()=>signOut({redirectUrl:basePath||'/'})} data-testid="button-signout">Sign out</button></>:<Link href="/sign-in" data-testid="link-signin">Sign in</Link>}</nav></header>{children}<footer className="footer"><span className="mono">LCC INTERSQUAD COMP SERIES</span></footer></div></div>;
-}
-function Status({ value }: { value: string }) { return <span className={`status ${value}`} data-testid={`status-${value}`}>{value}</span>; }
-function Busy({ label='Loading event details' }: {label?:string}) { return <div className="page"><div className="panel"><span className="eyebrow">One moment</span><div style={{height:12}}/><div className="muted" data-testid="loading-state">{label}…</div></div></div>; }
-function Failure({ retry }: {retry:()=>void}) { return <div className="empty" data-testid="error-state"><strong>Could not load this page.</strong><p>Please try again.</p><button className="btn small" onClick={retry} data-testid="button-retry">Try again</button></div>; }
 function AccountSync() {
   const { user, isLoaded } = useUser(); const account = useGetMyAccount({ query: { queryKey: getGetMyAccountQueryKey(), enabled: !!user && isLoaded } });
   const save = useSaveAccountProfile(); const profile = account.data;
@@ -79,13 +66,13 @@ function Home() {
 }
 function Register({eventId}:{eventId:string}) {
   const q=useGetPublicEvent(eventId,{query:{queryKey:getGetPublicEventQueryKey(eventId)}}); const create=useCreateScorecard(); const [,go]=useLocation();
-  const [name,setName]=useState(''),[squad,setSquad]=useState('RavensWall'),[isClimber,setIsClimber]=useState(true),[logger,setLogger]=useState(''),[email,setEmail]=useState(''),[terms,setTerms]=useState(false),[birth,setBirth]=useState('');
+  const [name,setName]=useState(''),[squad,setSquad]=useState('RavensWall'),[isClimber,setIsClimber]=useState(true),[logger,setLogger]=useState(''),[email,setEmail]=useState(''),[terms,setTerms]=useState(false),[birth,setBirth]=useState(''),[gender,setGender]=useState<''|'O'|'W+'>('');
   if(q.isLoading)return <Shell><Busy/></Shell>;
   const event=q.data;
   const year=event?eventYear(event):new Date().getFullYear();
   const birthNum=/^\d{4}$/.test(birth)?Number(birth):NaN;
   const bracket=Number.isNaN(birthNum)?null:bracketFor(birthNum,year);
-  return <Shell><main className="page">{q.isError||!event?<Failure retry={()=>q.refetch()}/>:<><span className="eyebrow">Scorecard details</span><h1 className="page-title">{event.name}</h1><p className="muted">{event.eventDate?new Date(event.eventDate).toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'}):'Date to be announced'} · 20 boulders · four attempts each</p><div className="panel" style={{maxWidth:760,marginTop:25}}><form className="form-grid" onSubmit={e=>{e.preventDefault();if(!terms||!bracket)return;create.mutate({eventId,data:{climberName:name.trim(),birthYear:birthNum,squad:squad as 'RavensWall'|'HarroWall'|'VauxWall'|'BethWall',isClimber,loggerName:isClimber?undefined:logger.trim(),email:email.trim()||undefined,acceptedTerms:true}},{onSuccess:s=>{queryClient.invalidateQueries({queryKey:getGetPublicEventQueryKey(eventId)});go(`/scorecard/${s.id}`)}})}} data-testid="form-registration">
+  return <Shell><main className="page">{q.isError||!event?<Failure retry={()=>q.refetch()}/>:<><span className="eyebrow">Scorecard details</span><h1 className="page-title">{event.name}</h1><p className="muted">{event.eventDate?new Date(event.eventDate).toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'}):'Date to be announced'} · 20 boulders · four attempts each</p><div className="panel" style={{maxWidth:760,marginTop:25}}><form className="form-grid" onSubmit={e=>{e.preventDefault();if(!terms||!bracket||!gender)return;create.mutate({eventId,data:{climberName:name.trim(),birthYear:birthNum,gender,squad:squad as 'RavensWall'|'HarroWall'|'VauxWall'|'BethWall',isClimber,loggerName:isClimber?undefined:logger.trim(),email:email.trim()||undefined,acceptedTerms:true}},{onSuccess:s=>{queryClient.invalidateQueries({queryKey:getGetPublicEventQueryKey(eventId)});go(`/scorecard/${s.id}`)}})}} data-testid="form-registration">
       <div className="field full"><label htmlFor="climber">Climber name</label><input id="climber" required maxLength={120} value={name} onChange={e=>setName(e.target.value)} placeholder="Name on the scorecard" data-testid="input-climber-name"/></div>
       <div className="field">
         <label htmlFor="birth-year">Year of birth</label>
@@ -94,13 +81,21 @@ function Register({eventId}:{eventId:string}) {
           {birth.length<4?`Age at 31 December ${year}`:bracket?`${bracket} · age ${year-birthNum} at 31 December ${year}`:`Not eligible: age at 31 December ${year} must be under 17`}
         </span>
       </div>
+      <div className="field">
+        <label htmlFor="gender">Gender category</label>
+        <select id="gender" required value={gender} onChange={e=>setGender(e.target.value as ''|'O'|'W+')} data-testid="select-gender">
+          <option value="" disabled>Choose a category</option>
+          <option value="O">O</option>
+          <option value="W+">W+</option>
+        </select>
+      </div>
       <div className="field"><label htmlFor="squad">Home wall</label><select id="squad" value={squad} onChange={e=>setSquad(e.target.value)} data-testid="select-squad">{['RavensWall','HarroWall','VauxWall','BethWall'].map(s=><option key={s} value={s}>{s.replace('Wall',' Wall')}</option>)}</select></div>
       <div className="field"><label htmlFor="email">Email <span className="muted">(optional)</span></label><input id="email" type="email" maxLength={254} value={email} onChange={e=>setEmail(e.target.value)} placeholder="For attempt confirmations" data-testid="input-email"/></div>
       <label className="checkrow field full"><input type="checkbox" checked={isClimber} onChange={e=>setIsClimber(e.target.checked)} data-testid="checkbox-is-climber"/><span>I am the climber and will log my own results.</span></label>
       {!isClimber&&<div className="field full"><label htmlFor="logger">Supervisor name</label><input id="logger" required maxLength={120} value={logger} onChange={e=>setLogger(e.target.value)} placeholder="Supervisor name" data-testid="input-logger-name"/></div>}
       <label className="checkrow field full"><input type="checkbox" required checked={terms} onChange={e=>setTerms(e.target.checked)} data-testid="checkbox-terms"/><span>I accept the event terms and privacy statement, including how my scorecard information is used.</span></label>
       <details className="privacy-note field full"><summary>Read event terms and privacy statement</summary><p>Follow the venue’s safety requirements and the organizers’ instructions while climbing. Your climber name, squad, scorecard, and attempt history are visible to event organizers. Final standings become public only after the organizers release them. If you provide an email address, it is used to send scorecard update confirmations. The score and correction history is retained as part of the event record.</p></details>
-      <div className="field full"><button className="btn coral" disabled={create.isPending||!bracket} data-testid="button-submit-registration">{create.isPending?'Creating scorecard…':'Create scorecard'} <ArrowRight size={16}/></button>{create.isError&&<p className="muted" role="alert" data-testid="registration-error">Could not create scorecard. Please try again.</p>}</div>
+      <div className="field full"><button className="btn coral" disabled={create.isPending||!bracket||!gender} data-testid="button-submit-registration">{create.isPending?'Creating scorecard…':'Create scorecard'} <ArrowRight size={16}/></button>{create.isError&&<p className="muted" role="alert" data-testid="registration-error">Could not create scorecard. Please try again.</p>}</div>
     </form></div></>}</main></Shell>;
 }
 
@@ -137,9 +132,11 @@ function Scorecard({scorecardId}:{scorecardId:string}) {
   const refresh=()=>Promise.all([
     queryClient.invalidateQueries({queryKey:getGetScorecardQueryKey(scorecardId)}),
     queryClient.invalidateQueries({queryKey:getGetScorecardHistoryQueryKey(scorecardId)}),
+    queryClient.invalidateQueries({queryKey:getGetSeriesProgressQueryKey()}),
     ...(card?[
       queryClient.invalidateQueries({queryKey:getGetEventMonitorQueryKey(card.eventId)}),
       queryClient.invalidateQueries({queryKey:getListEventScorecardsQueryKey(card.eventId)}),
+      queryClient.invalidateQueries({queryKey:getGetPublicResultsQueryKey(card.eventId)}),
     ]:[]),
   ]);
   const onSaved=(r:AttemptLogResult)=>setNotice(
@@ -153,7 +150,7 @@ function Scorecard({scorecardId}:{scorecardId:string}) {
     <span className="eyebrow">{card.eventName}</span>
     <h1 className="page-title">{card.climberName}</h1>
     <p className="muted" data-testid="text-scorecard-meta">
-      {card.squad.replace('Wall',' Wall')} · <span data-testid="text-age-bracket">{bracketLabel(card.ageBracket)}</span>
+      {card.squad.replace('Wall',' Wall')} · <span data-testid="text-age-bracket">{bracketLabel(card.ageBracket)}</span> · <span data-testid="text-gender">{genderLabel(card.gender)}</span>
       {card.loggerName&&<> · Supervisor: {card.loggerName}</>}
     </p>
     <div className="score-head">
@@ -174,7 +171,14 @@ function HistoryList({records}:{records:AttemptRecord[]}) { return <div classNam
 
 function Results({eventId}:{eventId:string}) {
  const q=useGetPublicResults(eventId,{query:{queryKey:getGetPublicResultsQueryKey(eventId),refetchInterval:10000}});
- return <Shell><main className="page">{q.isLoading?<Busy label="Checking final results"/>:q.isError||!q.data||!q.data.event.resultsReleased?<div className="panel" data-testid="results-unreleased"><h1 className="page-title">Results not yet released</h1><Link className="btn" href="/" data-testid="link-back-events">Back to events</Link></div>:<><span className="eyebrow">Final results</span><h1 className="page-title">{q.data.event.name}</h1><p className="muted">Final results · {q.data.event.eventDate?new Date(q.data.event.eventDate).toLocaleDateString():''}</p><div className="table-wrap" style={{marginTop:25}}><table><thead><tr><th>Place</th><th>Climber</th><th>Squad</th><th>Age</th><th>Score</th><th>Tops</th><th>Attempts</th></tr></thead><tbody>{q.data.results.map(r=><tr key={`${r.rank}-${r.climberName}`} data-testid={`row-result-${r.rank}`}><td className="mono">#{r.rank}</td><td><strong>{r.climberName}</strong></td><td>{r.squad.replace('Wall',' Wall')}</td><td>{bracketLabel(r.ageBracket)}</td><td className="mono">{r.totalPoints.toLocaleString()}</td><td>{r.completedCount}</td><td>{r.attemptCount}</td></tr>)}</tbody></table></div></>}</main></Shell>;
+ return <Shell><main className="page">{q.isLoading?<Busy label="Checking final results"/>:q.isError||!q.data||!q.data.event.resultsReleased?<div className="panel" data-testid="results-unreleased"><h1 className="page-title">Results not yet released</h1><Link className="btn" href="/" data-testid="link-back-events">Back to events</Link></div>:<><span className="eyebrow">Final results</span><h1 className="page-title">{q.data.event.name}</h1><p className="muted">Final results · {q.data.event.eventDate?new Date(q.data.event.eventDate).toLocaleDateString():''} · <Link href="/series" data-testid="link-results-series">Series progress</Link></p>
+    <UncategorizedNote count={q.data.uncategorizedCount}/>
+    <h2 className="sub-head">Squad standings</h2>
+    <SquadStandings squads={q.data.squads}/>
+    <h2 className="sub-head">Category podiums</h2>
+    <CategoryPodiums podiums={q.data.podiums}/>
+    <h2 className="sub-head">All climbers</h2>
+    <div className="table-wrap"><table><thead><tr><th>Place</th><th>Climber</th><th>Squad</th><th>Age</th><th>Gender</th><th>Score</th><th>Tops</th><th>Attempts</th></tr></thead><tbody>{q.data.results.map(r=><tr key={`${r.rank}-${r.climberName}`} data-testid={`row-result-${r.rank}`}><td className="mono">#{r.rank}</td><td><strong>{r.climberName}</strong></td><td>{r.squad.replace('Wall',' Wall')}</td><td>{bracketLabel(r.ageBracket)}</td><td>{genderLabel(r.gender)}</td><td className="mono">{r.totalPoints.toLocaleString()}</td><td>{r.completedCount}</td><td>{r.attemptCount}</td></tr>)}</tbody></table></div></>}</main></Shell>;
 }
 
 function MyScorecards() {
@@ -183,7 +187,7 @@ function MyScorecards() {
   const cards = useListMyScorecards({ query: { queryKey: getListMyScorecardsQueryKey(), enabled: isLoaded && !!isSignedIn, refetchInterval: 30000 } });
   if (!isLoaded) return <Shell><Busy label="Checking your account"/></Shell>;
   if (!isSignedIn) return <Shell><main className="page"><div className="panel"><span className="eyebrow">Your competition history</span><h1 className="page-title">Sign in to see your scorecards.</h1><p className="muted">Sign in with the email address used on the scorecard. Scorecards linked to that address appear here.</p><Link className="btn coral" href="/sign-in" data-testid="link-scorecards-signin">Sign in</Link></div></main></Shell>;
-  return <Shell><main className="page"><div className="section-head"><div><h1 className="page-title">My scorecards</h1></div>{account.data?.role==='admin'&&<Link className="btn outline" href="/admin" data-testid="link-organizer-dashboard">Organizer dashboard <ArrowRight size={15}/></Link>}</div>{cards.isLoading?<div className="panel">Finding scorecards linked to your account…</div>:cards.isError?<Failure retry={()=>cards.refetch()}/>:!cards.data?.length?<div className="empty" data-testid="empty-my-scorecards"><Mountain size={28}/><p>No scorecards are linked to this email address.</p><Link className="btn" href="/" data-testid="link-browse-events">Open events</Link></div>:<div className="event-grid">{cards.data.map(card=><article className="event-card" key={card.id} data-testid={`card-my-scorecard-${card.id}`}><div><Status value={card.eventStatus}/><h3>{card.eventName}</h3><p>{card.climberName} · {card.squad.replace('Wall',' Wall')} · {bracketLabel(card.ageBracket)}</p><div className="score-sub">{card.totalPoints} points · {card.completedCount} completed</div></div><div className="tool-row"><Link className="btn small" href={`/scorecard/${card.id}`} data-testid={`link-open-scorecard-${card.id}`}>Open scorecard <ArrowRight size={14}/></Link><Link className="btn outline small" href={`/results/${card.eventId}`} data-testid={`link-scorecard-results-${card.id}`}>Results</Link></div></article>)}</div>}</main></Shell>;
+  return <Shell><main className="page"><div className="section-head"><div><h1 className="page-title">My scorecards</h1></div>{account.data?.role==='admin'&&<Link className="btn outline" href="/admin" data-testid="link-organizer-dashboard">Organizer dashboard <ArrowRight size={15}/></Link>}</div>{cards.isLoading?<div className="panel">Finding scorecards linked to your account…</div>:cards.isError?<Failure retry={()=>cards.refetch()}/>:!cards.data?.length?<div className="empty" data-testid="empty-my-scorecards"><Mountain size={28}/><p>No scorecards are linked to this email address.</p><Link className="btn" href="/" data-testid="link-browse-events">Open events</Link></div>:<div className="event-grid">{cards.data.map(card=><article className="event-card" key={card.id} data-testid={`card-my-scorecard-${card.id}`}><div><Status value={card.eventStatus}/><h3>{card.eventName}</h3><p>{card.climberName} · {card.squad.replace('Wall',' Wall')} · {bracketLabel(card.ageBracket)} · {genderLabel(card.gender)}</p><div className="score-sub">{card.totalPoints} points · {card.completedCount} completed</div></div><div className="tool-row"><Link className="btn small" href={`/scorecard/${card.id}`} data-testid={`link-open-scorecard-${card.id}`}>Open scorecard <ArrowRight size={14}/></Link><Link className="btn outline small" href={`/results/${card.eventId}`} data-testid={`link-scorecard-results-${card.id}`}>Results</Link></div></article>)}</div>}</main></Shell>;
 }
 
 function AdminGuard({children}:{children:ReactNode}) {
@@ -195,7 +199,7 @@ function AdminGuard({children}:{children:ReactNode}) {
 }
 function AdminLayout({children,title}:{children:ReactNode,title:string}) {
  const {user}=useUser();const {signOut}=useClerk();
- return <div className="admin-shell"><aside className="admin-side"><Logo/><Link href="/admin" className="side-link" data-testid="link-admin-events"><Activity size={16} style={{verticalAlign:'middle',marginRight:8}}/>Events</Link><Link href="/admin/users" className="side-link" data-testid="link-admin-users"><Users size={16} style={{verticalAlign:'middle',marginRight:8}}/>Accounts</Link><div style={{marginTop:'auto',borderTop:'1px solid #ffffff22',paddingTop:16,fontSize:12,color:'#d0d0d0'}}>{user?.fullName||user?.username}<button className="side-link" onClick={()=>signOut({redirectUrl:basePath||'/'})} data-testid="button-admin-signout">Sign out</button></div></aside><main className="admin-main"><div className="admin-top"><h1>{title}</h1><Link href="/" className="btn outline small" data-testid="link-public-site">Public site <ExternalLink size={14}/></Link></div>{children}</main></div>;
+ return <div className="admin-shell"><aside className="admin-side"><Logo/><Link href="/admin" className="side-link" data-testid="link-admin-events"><Activity size={16} style={{verticalAlign:'middle',marginRight:8}}/>Events</Link><Link href="/admin/users" className="side-link" data-testid="link-admin-users"><Users size={16} style={{verticalAlign:'middle',marginRight:8}}/>Accounts</Link><Link href="/series" className="side-link" data-testid="link-admin-series"><Trophy size={16} style={{verticalAlign:'middle',marginRight:8}}/>Series</Link><div style={{marginTop:'auto',borderTop:'1px solid #ffffff22',paddingTop:16,fontSize:12,color:'#d0d0d0'}}>{user?.fullName||user?.username}<button className="side-link" onClick={()=>signOut({redirectUrl:basePath||'/'})} data-testid="button-admin-signout">Sign out</button></div></aside><main className="admin-main"><div className="admin-top"><h1>{title}</h1><Link href="/" className="btn outline small" data-testid="link-public-site">Public site <ExternalLink size={14}/></Link></div>{children}</main></div>;
 }
 function AdminHome() {
  const q=useListAdminEvents({query:{queryKey:getListAdminEventsQueryKey()}});const create=useCreateEvent();const [show,setShow]=useState(false);const [name,setName]=useState('');const [date,setDate]=useState('');const [points,setPoints]=useState([10,7,4,1]);
@@ -237,7 +241,9 @@ function AdminEvent({eventId}:{eventId:string}) {
    </div>}
   </div>
   {editing&&<div className="tool-row" style={{marginBottom:18}}><button className="btn small" disabled={update.isPending} onClick={()=>update.mutate({eventId,data:{name,eventDate:date||null,pointsByAttempts:pts}},{onSuccess:()=>{queryClient.invalidateQueries({queryKey:getGetEventMonitorQueryKey(eventId)});queryClient.invalidateQueries({queryKey:getListAdminEventsQueryKey()});queryClient.invalidateQueries({queryKey:getGetPublicEventQueryKey(eventId)});queryClient.invalidateQueries({queryKey:getListEventScorecardsQueryKey(eventId)});setEditing(false)}})} data-testid="button-save-event-edits">Save setup</button><button className="btn outline small" onClick={()=>setEditing(false)}>Cancel</button></div>}
-  <div className="section-head"><div><span className="eyebrow">Scorecards</span><h2>Standings</h2></div><span className="muted">Refreshes automatically</span></div>{cards.isLoading?<div className="panel">Updating scorecards…</div>:cards.isError?<Failure retry={()=>cards.refetch()}/>:!cards.data?.length?<div className="empty">No scorecards yet.</div>:<div className="table-wrap"><table><thead><tr><th>Climber</th><th>Squad</th><th>Age</th><th>Score</th><th>Tops</th><th>Attempts</th><th></th></tr></thead><tbody>{[...cards.data].sort((a,b)=>b.totalPoints-a.totalPoints).map(c=><tr key={c.id} data-testid={`row-live-card-${c.id}`}><td><strong>{c.climberName}</strong></td><td>{c.squad}</td><td>{bracketLabel(c.ageBracket)}</td><td className="mono">{c.totalPoints}</td><td>{c.completedCount}</td><td>{c.attemptCount}</td><td><Link className="btn small" href={`/admin/scorecards/${c.id}`} data-testid={`link-inspect-card-${c.id}`}>Inspect</Link></td></tr>)}</tbody></table></div>}</>}</AdminLayout></AdminGuard>;
+  <div className="section-head"><div><span className="eyebrow">{ev!.resultsReleased?'Published results':'Live, not public'}</span><h2>Squad standings</h2></div></div>
+  <SquadStandings squads={q.data.squads}/>
+  <div className="section-head"><div><span className="eyebrow">Scorecards</span><h2>Standings</h2></div><span className="muted">Refreshes automatically</span></div>{cards.isLoading?<div className="panel">Updating scorecards…</div>:cards.isError?<Failure retry={()=>cards.refetch()}/>:!cards.data?.length?<div className="empty">No scorecards yet.</div>:<div className="table-wrap"><table><thead><tr><th>Climber</th><th>Squad</th><th>Age</th><th>Gender</th><th>Score</th><th>Tops</th><th>Attempts</th><th></th></tr></thead><tbody>{[...cards.data].sort((a,b)=>b.totalPoints-a.totalPoints).map(c=><tr key={c.id} data-testid={`row-live-card-${c.id}`}><td><strong>{c.climberName}</strong></td><td>{c.squad}</td><td>{bracketLabel(c.ageBracket)}</td><td>{genderLabel(c.gender)}</td><td className="mono">{c.totalPoints}</td><td>{c.completedCount}</td><td>{c.attemptCount}</td><td><Link className="btn small" href={`/admin/scorecards/${c.id}`} data-testid={`link-inspect-card-${c.id}`}>Inspect</Link></td></tr>)}</tbody></table></div>}</>}</AdminLayout></AdminGuard>;
 }
 function AdminCard({scorecardId}:{scorecardId:string}) {
   const q=useGetAdminScorecard(scorecardId,{query:{queryKey:getGetAdminScorecardQueryKey(scorecardId)}});
@@ -248,9 +254,11 @@ function AdminCard({scorecardId}:{scorecardId:string}) {
     queryClient.invalidateQueries({queryKey:getGetAdminScorecardQueryKey(scorecardId)}),
     queryClient.invalidateQueries({queryKey:getGetScorecardQueryKey(scorecardId)}),
     queryClient.invalidateQueries({queryKey:getGetScorecardHistoryQueryKey(scorecardId)}),
+    queryClient.invalidateQueries({queryKey:getGetSeriesProgressQueryKey()}),
     ...(card?[
       queryClient.invalidateQueries({queryKey:getGetEventMonitorQueryKey(card.eventId)}),
       queryClient.invalidateQueries({queryKey:getListEventScorecardsQueryKey(card.eventId)}),
+      queryClient.invalidateQueries({queryKey:getGetPublicResultsQueryKey(card.eventId)}),
     ]:[]),
   ]);
   return <AdminGuard><AdminLayout title="Scorecard inspection">
@@ -259,7 +267,7 @@ function AdminCard({scorecardId}:{scorecardId:string}) {
       {card.eventStatus==='closed'&&<p className="muted">Scoring is closed for competitors. Admin corrections remain available and update any published results.</p>}
       <h2 className="display" style={{fontSize:26}}>{card.climberName} · {card.totalPoints} pts</h2>
       <p className="muted">
-        {card.eventName} · {card.squad} · <span data-testid="text-admin-age-bracket">{bracketLabel(card.ageBracket)}</span>
+        {card.eventName} · {card.squad} · <span data-testid="text-admin-age-bracket">{bracketLabel(card.ageBracket)}</span> · <span data-testid="text-admin-gender">{genderLabel(card.gender)}</span>
         {card.birthYear!=null&&<> · born {card.birthYear}</>}
         {card.loggerName&&<> · Supervisor: {card.loggerName}</>}
       </p>
@@ -288,7 +296,7 @@ function ClerkRoutes(){
  const [,setLocation]=useLocation();
  return <ClerkProvider publishableKey={clerkPubKey} proxyUrl={clerkProxyUrl} appearance={appearance} signInUrl={`${basePath}/sign-in`} signUpUrl={`${basePath}/sign-up`} localization={{signIn:{start:{title:'Welcome back',subtitle:'Sign in to LCC Intersquad Comp Series'}},signUp:{start:{title:'Create an account',subtitle:'Use the email address on your scorecard'}}}} routerPush={to=>setLocation(stripBase(to))} routerReplace={to=>setLocation(stripBase(to),{replace:true})}>
    <QueryClientProvider client={queryClient}><ClerkQueryClientCacheInvalidator/><AccountSync/><Switch>
-    <Route path="/" component={HomeRedirect}/><Route path="/sign-in/*?" component={SignInPage}/><Route path="/sign-up/*?" component={SignUpPage}/><Route path="/my-scorecards" component={MyScorecards}/>
+    <Route path="/" component={HomeRedirect}/><Route path="/sign-in/*?" component={SignInPage}/><Route path="/sign-up/*?" component={SignUpPage}/><Route path="/my-scorecards" component={MyScorecards}/><Route path="/series" component={SeriesPage}/>
     <Route path="/event/:eventId">{params=><Register eventId={params.eventId}/>}</Route><Route path="/scorecard/:scorecardId">{params=><Scorecard scorecardId={params.scorecardId}/>}</Route><Route path="/results/:eventId">{params=><Results eventId={params.eventId}/>}</Route>
     <Route path="/admin" component={AdminHome}/><Route path="/admin/events/:eventId">{params=><AdminEvent eventId={params.eventId}/>}</Route><Route path="/admin/scorecards/:scorecardId">{params=><AdminCard scorecardId={params.scorecardId}/>}</Route><Route path="/admin/users" component={AdminUsers}/>
     <Route><Shell><main className="page"><div className="panel"><h1 className="page-title">Page not found</h1><Link href="/" className="btn">Back to events</Link></div></main></Shell></Route>

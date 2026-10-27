@@ -19,6 +19,7 @@ export const scorecardsTable = pgTable(
       .references(() => eventsTable.id, { onDelete: "cascade" }),
     climberName: varchar("climber_name", { length: 120 }).notNull(),
     birthYear: integer("birth_year"),
+    gender: varchar("gender", { length: 2 }),
     squad: varchar("squad", { length: 32 }).notNull(),
     isClimber: boolean("is_climber").notNull(),
     loggerName: varchar("logger_name", { length: 120 }),

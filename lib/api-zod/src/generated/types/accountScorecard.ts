@@ -7,9 +7,12 @@
  */
 import type { AccountScorecardAgeBracket } from './accountScorecardAgeBracket';
 import type { AccountScorecardEventStatus } from './accountScorecardEventStatus';
+import type { AccountScorecardGender } from './accountScorecardGender';
 import type { AccountScorecardSquad } from './accountScorecardSquad';
 
 export interface AccountScorecard {
+  /** @nullable */
+  gender?: AccountScorecardGender;
   /** @nullable */
   ageBracket?: AccountScorecardAgeBracket;
   id: string;

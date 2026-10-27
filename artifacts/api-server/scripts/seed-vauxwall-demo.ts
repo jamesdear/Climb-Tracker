@@ -8,7 +8,17 @@ try {
   await db.transaction(async (tx) => {
     const [existing] = await tx.select().from(eventsTable).where(eq(eventsTable.id, eventId));
     if (existing) {
-      console.log("Demo already exists; existing scores unchanged.");
+      const demoCards = await tx.select().from(scorecardsTable).where(eq(scorecardsTable.eventId, eventId));
+      for (const card of demoCards) {
+        if (card.termsVersion !== "demo-fictional" || card.gender !== null) continue;
+        const match = /^Demo Climber (\d{2})$/.exec(card.climberName);
+        if (!match) continue;
+        const index = Number(match[1]) - 1;
+        await tx.update(scorecardsTable)
+          .set({ gender: Math.floor(index / 6) % 2 === 0 ? "O" : "W+" })
+          .where(eq(scorecardsTable.id, card.id));
+      }
+      console.log("Demo exists; filled missing fictional gender categories only. Scores and event status unchanged.");
       return;
     }
     await tx.insert(eventsTable).values({
@@ -26,6 +36,7 @@ try {
       const supervisor = `Demo Supervisor ${String(i + 1).padStart(2, "0")}`;
       await tx.insert(scorecardsTable).values({
         id, eventId, climberName: name, birthYear: [2015, 2014, 2013, 2012, 2011, 2010][i % 6],
+        gender: Math.floor(i / 6) % 2 === 0 ? "O" : "W+",
         squad: squads[i % 4], isClimber, loggerName: isClimber ? null : supervisor,
         acceptedTermsAt: new Date("2026-10-27T09:00:00Z"), termsVersion: "demo-fictional",
       });

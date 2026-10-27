@@ -7,8 +7,10 @@
  */
 import type { Event } from './event';
 import type { ScorecardSummary } from './scorecardSummary';
+import type { SquadResult } from './squadResult';
 
 export interface EventMonitor {
+  squads: SquadResult[];
   event: Event;
   scorecardCount: number;
   totalAttempts: number;

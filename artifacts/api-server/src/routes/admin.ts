@@ -26,6 +26,7 @@ import {
   scorecardsTable,
 } from "@workspace/db";
 import { requireAdmin } from "../middlewares/appAuth";
+import { squadStandings } from "../lib/standings";
 import {
   buildScorecardDetail,
   getEvent,
@@ -171,6 +172,7 @@ router.get(
         scorecardCount: scorecards.length,
         totalAttempts,
         scorecards,
+        squads: squadStandings(scorecards),
       }),
     );
   },

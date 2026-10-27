@@ -42,7 +42,8 @@ import type {
   ResultsResponse,
   ScorecardDetail,
   ScorecardRegistrationInput,
-  ScorecardSummary
+  ScorecardSummary,
+  SeriesProgress
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -71,6 +72,107 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getGetSeriesProgressUrl = () => {
+
+
+
+
+  return `/api/series`
+}
+
+/**
+ * @summary Public series progress and released category podiums
+ */
+export const getSeriesProgress = async ( options?: Parameters<typeof customFetch>[1]): Promise<SeriesProgress> => {
+
+  return customFetch<SeriesProgress>(getGetSeriesProgressUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetSeriesProgressQueryKey = () => {
+    return [
+    `/api/series`
+    ] as const;
+    }
+
+
+export const getGetSeriesProgressQueryOptions = <TData = Awaited<ReturnType<typeof getSeriesProgress>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSeriesProgress>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetSeriesProgressQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSeriesProgress>>> = ({ signal }) => getSeriesProgress({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getSeriesProgress>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetSeriesProgressQueryResult = NonNullable<Awaited<ReturnType<typeof getSeriesProgress>>>
+export type GetSeriesProgressQueryError = ErrorType<unknown>
+
+
+export function useGetSeriesProgress<TData = Awaited<ReturnType<typeof getSeriesProgress>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSeriesProgress>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSeriesProgress>>,
+          TError,
+          Awaited<ReturnType<typeof getSeriesProgress>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetSeriesProgress<TData = Awaited<ReturnType<typeof getSeriesProgress>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSeriesProgress>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSeriesProgress>>,
+          TError,
+          Awaited<ReturnType<typeof getSeriesProgress>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetSeriesProgress<TData = Awaited<ReturnType<typeof getSeriesProgress>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSeriesProgress>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Public series progress and released category podiums
+ */
+
+export function useGetSeriesProgress<TData = Awaited<ReturnType<typeof getSeriesProgress>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSeriesProgress>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetSeriesProgressQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getHealthCheckUrl = () => {
 

@@ -5,9 +5,11 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { ScorecardRegistrationInputGender } from './scorecardRegistrationInputGender';
 import type { ScorecardRegistrationInputSquad } from './scorecardRegistrationInputSquad';
 
 export interface ScorecardRegistrationInput {
+  gender: ScorecardRegistrationInputGender;
   /**
      * @minimum 1900
      * @maximum 2100
