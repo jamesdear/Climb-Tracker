@@ -19,6 +19,27 @@ tags:
   - name: admin
     description: Administrator operations
 paths:
+  /admin/invitations:
+    post:
+      operationId: inviteOrganizer
+      tags: [admin]
+      summary: Email an organizer account invitation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrganizerInvitationInput"
+      responses:
+        "201":
+          description: Invitation sent
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [message]
+                properties:
+                  message: { type: string }
   /series:
     get:
       operationId: getSeriesProgress
@@ -462,6 +483,11 @@ paths:
                 $ref: "#/components/schemas/AccountProfile"
 components:
   schemas:
+    OrganizerInvitationInput:
+      type: object
+      required: [email]
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
     HealthStatus:
       type: object
       properties:

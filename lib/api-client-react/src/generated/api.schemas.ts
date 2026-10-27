@@ -5,6 +5,11 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export interface OrganizerInvitationInput {
+  /** @maxLength 254 */
+  email: string;
+}
+
 export interface HealthStatus {
   status: string;
 }
@@ -544,4 +549,8 @@ export interface SeriesEvent {
 export interface SeriesProgress {
   events: SeriesEvent[];
 }
+
+export type InviteOrganizer201 = {
+  message: string;
+};
 

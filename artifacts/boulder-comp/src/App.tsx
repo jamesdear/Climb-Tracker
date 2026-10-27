@@ -6,6 +6,7 @@ import { shadcn } from '@clerk/themes';
 import { Route, Switch, Link, useLocation, Router as WouterRouter } from 'wouter';
 import { Activity, ArrowRight, Check, Copy, ExternalLink, Mountain, Plus, Trophy, Users } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import { InviteOrganizer } from './components/InviteOrganizer';
 import {
   useListOpenEvents, useGetPublicEvent, useCreateScorecard, useGetScorecard, useGetScorecardHistory,
   useGetPublicResults, useSaveAccountProfile, useGetMyAccount, useListAdminEvents, useCreateEvent, useUpdateEvent,
@@ -282,7 +283,7 @@ function AdminCard({scorecardId}:{scorecardId:string}) {
 
 function AdminUsers() {
  const q=useListAdminUsers({query:{queryKey:getListAdminUsersQueryKey()}});const change=useUpdateAccountRole();
- return <AdminGuard><AdminLayout title="Accounts & roles"><p className="muted">Assign organizer access.</p>{q.isLoading?<div className="panel">Loading account list…</div>:q.isError?<Failure retry={()=>q.refetch()}/>:<div className="table-wrap" style={{marginTop:20}}><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Access</th></tr></thead><tbody>{q.data?.map(u=><tr key={u.clerkUserId} data-testid={`row-account-${u.clerkUserId}`}><td><strong>{u.displayName}</strong></td><td>{u.email||'—'}</td><td><span className="mono">{u.role}</span></td><td><button className={`btn small ${u.role==='admin'?'outline':''}`} disabled={change.isPending} onClick={()=>change.mutate({clerkUserId:u.clerkUserId,data:{role:u.role==='admin'?'competitor':'admin'}},{onSuccess:()=>{queryClient.invalidateQueries({queryKey:getListAdminUsersQueryKey()});queryClient.invalidateQueries({queryKey:getGetMyAccountQueryKey()})}})} data-testid={`button-role-${u.clerkUserId}`}>{u.role==='admin'?'Remove organizer':'Make organizer'}</button></td></tr>)}</tbody></table></div>}</AdminLayout></AdminGuard>;
+ return <AdminGuard><AdminLayout title="Accounts & roles"><InviteOrganizer/><p className="muted">Assign organizer access.</p>{q.isLoading?<div className="panel">Loading account list…</div>:q.isError?<Failure retry={()=>q.refetch()}/>:<div className="table-wrap" style={{marginTop:20}}><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Access</th></tr></thead><tbody>{q.data?.map(u=><tr key={u.clerkUserId} data-testid={`row-account-${u.clerkUserId}`}><td><strong>{u.displayName}</strong></td><td>{u.email||'—'}</td><td><span className="mono">{u.role}</span></td><td><button className={`btn small ${u.role==='admin'?'outline':''}`} disabled={change.isPending} onClick={()=>change.mutate({clerkUserId:u.clerkUserId,data:{role:u.role==='admin'?'competitor':'admin'}},{onSuccess:()=>{queryClient.invalidateQueries({queryKey:getListAdminUsersQueryKey()});queryClient.invalidateQueries({queryKey:getGetMyAccountQueryKey()})}})} data-testid={`button-role-${u.clerkUserId}`}>{u.role==='admin'?'Remove organizer':'Make organizer'}</button></td></tr>)}</tbody></table></div>}</AdminLayout></AdminGuard>;
 }
 function ClerkQueryClientCacheInvalidator() {
  const { addListener } = useClerk(); const client = useQueryClient(); const previous = useRef<string|null|undefined>(undefined);

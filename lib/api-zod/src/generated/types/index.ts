@@ -36,6 +36,8 @@ export * from './eventStatusInput';
 export * from './eventStatusInputStatus';
 export * from './eventUpdate';
 export * from './healthStatus';
+export * from './inviteOrganizer201';
+export * from './organizerInvitationInput';
 export * from './resultEntry';
 export * from './resultEntryAgeBracket';
 export * from './resultEntryGender';

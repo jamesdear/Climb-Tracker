@@ -21,3 +21,4 @@ export * from "./attempt-records";
 export * from "./events";
 export * from "./scorecards";
 export * from "./user-profiles";
+export * from "./organizer-invitations";

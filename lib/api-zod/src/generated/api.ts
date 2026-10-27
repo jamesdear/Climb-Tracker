@@ -9,6 +9,22 @@ import * as zod from 'zod';
 
 
 /**
+ * @summary Email an organizer account invitation
+ */
+export const inviteOrganizerBodyEmailMax = 254;
+
+
+
+export const InviteOrganizerBody = zod.object({
+  "email": zod.string().email().max(inviteOrganizerBodyEmailMax)
+})
+
+export const InviteOrganizerResponse = zod.object({
+  "message": zod.string()
+})
+
+
+/**
  * @summary Public series progress and released category podiums
  */
 export const getSeriesProgressResponseEventsItemEventPointsByAttemptsItemMin = 0;

@@ -1,5 +1,6 @@
 import { clerkClient, getAuth } from "@clerk/express";
-import { count, desc, eq, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, gt, or, sql } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
 import { Router, type IRouter } from "express";
 import {
   GetMyAccountResponse,
@@ -10,11 +11,13 @@ import {
   UpdateAccountRoleBody,
   UpdateAccountRoleParams,
   UpdateAccountRoleResponse,
+  InviteOrganizerBody,
 } from "@workspace/api-zod";
 import {
   db,
   scorecardsTable,
   userProfilesTable,
+  organizerInvitationsTable,
 } from "@workspace/db";
 import { requireAdmin, requireUser } from "../middlewares/appAuth";
 import { loadScorecard } from "../lib/boulder-competition";
@@ -56,7 +59,17 @@ async function syncAccountProfile(
     ? { grant: false, staleIds: [] as string[] }
     : await initialAdminGrant(email, process.env.INITIAL_ADMIN_EMAIL, admins,
         (id) => clerkClient.users.getUser(id));
-  const role = existing?.role === "admin" || becomesInitialAdmin
+  const invitationId = clerkUser.publicMetadata.organizerInvitationId;
+  const [invitation] = email && typeof invitationId === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(invitationId)
+    ? await tx.select().from(organizerInvitationsTable).where(and(
+        eq(organizerInvitationsTable.id, invitationId),
+        eq(organizerInvitationsTable.email, email),
+        eq(organizerInvitationsTable.status, "sent"),
+        gt(organizerInvitationsTable.expiresAt, new Date()),
+      )).limit(1)
+    : [];
+  const role = existing?.role === "admin" || becomesInitialAdmin || !!invitation
     ? "admin"
     : "competitor";
 
@@ -83,9 +96,47 @@ async function syncAccountProfile(
       .set({ role: "competitor", updatedAt: new Date() })
       .where(eq(userProfilesTable.clerkUserId, staleId));
   }
+  if (invitation) {
+    await tx.update(organizerInvitationsTable)
+      .set({ status: "accepted", acceptedBy: userId })
+      .where(eq(organizerInvitationsTable.id, invitation.id));
+  }
   return profile;
   });
 }
+
+router.post("/admin/invitations", requireAdmin, async (req, res): Promise<void> => {
+  const body = InviteOrganizerBody.safeParse(req.body);
+  if (!body.success) {
+    res.status(400).json({ error: "Enter a valid email address." });
+    return;
+  }
+  const email = body.data.email.trim().toLowerCase();
+  const id = randomUUID();
+  // Clerk's account invitation is delivered by Clerk, not an unverified Resend sender.
+  await db.insert(organizerInvitationsTable).values({
+    id, email, invitedBy: getAuth(req).userId!, status: "sending",
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  });
+  try {
+    await clerkClient.invitations.createInvitation({
+      emailAddress: email, expiresInDays: 7, notify: true, ignoreExisting: false,
+      redirectUrl: "/sign-up",
+      publicMetadata: { organizerInvitationId: id },
+    });
+  } catch (error) {
+    await db.update(organizerInvitationsTable).set({ status: "failed" })
+      .where(eq(organizerInvitationsTable.id, id));
+    const status = typeof error === "object" && error !== null && "status" in error ? error.status : null;
+    res.status(status === 422 ? 409 : 502).json({ error: status === 422
+      ? "An account or invitation may already exist for this email. For an existing account, use Make organizer below."
+      : "The email provider could not send the invitation. Please try again." });
+    return;
+  }
+  await db.update(organizerInvitationsTable).set({ status: "sent" })
+    .where(eq(organizerInvitationsTable.id, id));
+  res.status(201).json({ message: `Invitation sent to ${email}. It expires in 7 days.` });
+});
 
 router.post("/auth/profile", requireUser, async (req, res): Promise<void> => {
   const parsed = SaveAccountProfileBody.safeParse(req.body);
