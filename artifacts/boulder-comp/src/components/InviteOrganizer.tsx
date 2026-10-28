@@ -1,19 +1,25 @@
 import { useState } from 'react';
 import { useInviteOrganizer } from '@workspace/api-client-react';
+import { OrganizerActivity } from './OrganizerActivity';
+import { useQueryClient } from '@tanstack/react-query';
+import { getGetOrganizerActivityQueryKey } from '@workspace/api-client-react';
 
 export function InviteOrganizer() {
+  const client = useQueryClient();
   const [email, setEmail] = useState('');
   const [delivery, setDelivery] = useState<'manual' | 'email'>('manual');
   const [copyMessage, setCopyMessage] = useState('');
   const invite = useInviteOrganizer();
   const error = invite.error as { data?: { error?: string } } | null;
-  return <section className="panel" style={{ marginBottom: 24 }}>
+  return <><section className="panel" style={{ marginBottom: 24 }}>
     <h2 className="sub-head">Invite organizer</h2>
     <p className="muted">Create a link for a new organizer and send it privately. It grants organizer access when they create their account. For an existing account, use Make organizer below.</p>
     <form onSubmit={e => {
       e.preventDefault();
       setCopyMessage('');
-      invite.mutate({ data: { email: email.trim(), delivery } });
+      invite.mutate({ data: { email: email.trim(), delivery } }, {
+        onSuccess: () => { void client.invalidateQueries({ queryKey: getGetOrganizerActivityQueryKey() }); },
+      });
     }}>
       <div className="field">
         <label htmlFor="organizer-email">Email address</label>
@@ -47,5 +53,5 @@ export function InviteOrganizer() {
       </div>}
       {invite.isError && <p role="alert" className="form-error">{error?.data?.error || 'Could not send the invitation. Please try again.'}</p>}
     </form>
-  </section>;
+  </section><OrganizerActivity/></>;
 }

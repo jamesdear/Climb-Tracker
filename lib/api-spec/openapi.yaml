@@ -19,6 +19,17 @@ tags:
   - name: admin
     description: Administrator operations
 paths:
+  /admin/activity:
+    get:
+      operationId: getOrganizerActivity
+      tags: [admin]
+      responses:
+        "200":
+          description: Organizer activity and invitation status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrganizerActivity"
   /admin/invitations:
     post:
       operationId: inviteOrganizer
@@ -484,6 +495,41 @@ paths:
                 $ref: "#/components/schemas/AccountProfile"
 components:
   schemas:
+    OrganizerActivity:
+      type: object
+      required: [organizers, invitations, actions]
+      properties:
+        organizers:
+          type: array
+          items:
+            type: object
+            required: [name, email, lastSeenAt]
+            properties:
+              name: { type: string }
+              email: { type: [string, "null"] }
+              lastSeenAt: { type: [string, "null"], format: date-time }
+        invitations:
+          type: array
+          items:
+            type: object
+            required: [id, email, status, expiresAt, acceptedAt]
+            properties:
+              id: { type: string }
+              email: { type: string }
+              status: { type: string }
+              expiresAt: { type: string, format: date-time }
+              acceptedAt: { type: [string, "null"], format: date-time }
+        actions:
+          type: array
+          items:
+            type: object
+            required: [id, actor, action, targetId, occurredAt]
+            properties:
+              id: { type: string }
+              actor: { type: string }
+              action: { type: string }
+              targetId: { type: [string, "null"] }
+              occurredAt: { type: string, format: date-time }
     OrganizerInvitationInput:
       type: object
       required: [email]

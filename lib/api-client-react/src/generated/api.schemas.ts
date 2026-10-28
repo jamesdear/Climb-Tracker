@@ -5,6 +5,38 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export type OrganizerActivityOrganizersItem = {
+  name: string;
+  /** @nullable */
+  email: string | null;
+  /** @nullable */
+  lastSeenAt: string | null;
+};
+
+export type OrganizerActivityInvitationsItem = {
+  id: string;
+  email: string;
+  status: string;
+  expiresAt: string;
+  /** @nullable */
+  acceptedAt: string | null;
+};
+
+export type OrganizerActivityActionsItem = {
+  id: string;
+  actor: string;
+  action: string;
+  /** @nullable */
+  targetId: string | null;
+  occurredAt: string;
+};
+
+export interface OrganizerActivity {
+  organizers: OrganizerActivityOrganizersItem[];
+  invitations: OrganizerActivityInvitationsItem[];
+  actions: OrganizerActivityActionsItem[];
+}
+
 export type OrganizerInvitationInputDelivery = typeof OrganizerInvitationInputDelivery[keyof typeof OrganizerInvitationInputDelivery];
 
 

@@ -22,3 +22,4 @@ export * from "./events";
 export * from "./scorecards";
 export * from "./user-profiles";
 export * from "./organizer-invitations";
+export * from "./organizer-activity";

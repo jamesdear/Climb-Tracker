@@ -8,6 +8,29 @@
 import * as zod from 'zod';
 
 
+export const GetOrganizerActivityResponse = zod.object({
+  "organizers": zod.array(zod.object({
+  "name": zod.string(),
+  "email": zod.string().nullable(),
+  "lastSeenAt": zod.coerce.date().nullable()
+})),
+  "invitations": zod.array(zod.object({
+  "id": zod.string(),
+  "email": zod.string(),
+  "status": zod.string(),
+  "expiresAt": zod.coerce.date(),
+  "acceptedAt": zod.coerce.date().nullable()
+})),
+  "actions": zod.array(zod.object({
+  "id": zod.string(),
+  "actor": zod.string(),
+  "action": zod.string(),
+  "targetId": zod.string().nullable(),
+  "occurredAt": zod.coerce.date()
+}))
+})
+
+
 /**
  * @summary Create or email an organizer account invitation
  */

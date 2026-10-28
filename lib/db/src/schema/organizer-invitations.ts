@@ -7,4 +7,5 @@ export const organizerInvitationsTable = pgTable("boulder_organizer_invitations"
   status: text("status").notNull(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   acceptedBy: text("accepted_by"),
+  acceptedAt: timestamp("accepted_at", { withTimezone: true }),
 });

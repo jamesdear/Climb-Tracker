@@ -10,6 +10,7 @@ export const userProfilesTable = pgTable("boulder_user_profiles", {
   email: varchar("email", { length: 254 }),
   displayName: varchar("display_name", { length: 120 }).notNull(),
   role: varchar("role", { length: 16 }).notNull().default("competitor"),
+  lastSeenAt: timestamp("last_seen_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

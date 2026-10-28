@@ -40,6 +40,7 @@ import type {
   EventUpdate,
   HealthStatus,
   InviteOrganizer201,
+  OrganizerActivity,
   OrganizerInvitationInput,
   ResultsResponse,
   ScorecardDetail,
@@ -74,6 +75,101 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getGetOrganizerActivityUrl = () => {
+
+
+
+
+  return `/api/admin/activity`
+}
+
+export const getOrganizerActivity = async ( options?: Parameters<typeof customFetch>[1]): Promise<OrganizerActivity> => {
+
+  return customFetch<OrganizerActivity>(getGetOrganizerActivityUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetOrganizerActivityQueryKey = () => {
+    return [
+    `/api/admin/activity`
+    ] as const;
+    }
+
+
+export const getGetOrganizerActivityQueryOptions = <TData = Awaited<ReturnType<typeof getOrganizerActivity>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrganizerActivity>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetOrganizerActivityQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getOrganizerActivity>>> = ({ signal }) => getOrganizerActivity({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getOrganizerActivity>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetOrganizerActivityQueryResult = NonNullable<Awaited<ReturnType<typeof getOrganizerActivity>>>
+export type GetOrganizerActivityQueryError = ErrorType<unknown>
+
+
+export function useGetOrganizerActivity<TData = Awaited<ReturnType<typeof getOrganizerActivity>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrganizerActivity>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getOrganizerActivity>>,
+          TError,
+          Awaited<ReturnType<typeof getOrganizerActivity>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetOrganizerActivity<TData = Awaited<ReturnType<typeof getOrganizerActivity>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrganizerActivity>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getOrganizerActivity>>,
+          TError,
+          Awaited<ReturnType<typeof getOrganizerActivity>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetOrganizerActivity<TData = Awaited<ReturnType<typeof getOrganizerActivity>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrganizerActivity>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetOrganizerActivity<TData = Awaited<ReturnType<typeof getOrganizerActivity>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrganizerActivity>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetOrganizerActivityQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getInviteOrganizerUrl = () => {
 

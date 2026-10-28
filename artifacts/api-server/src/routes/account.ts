@@ -98,7 +98,7 @@ async function syncAccountProfile(
   }
   if (invitation) {
     await tx.update(organizerInvitationsTable)
-      .set({ status: "accepted", acceptedBy: userId })
+      .set({ status: "accepted", acceptedBy: userId, acceptedAt: new Date() })
       .where(eq(organizerInvitationsTable.id, invitation.id));
   }
   return profile;
