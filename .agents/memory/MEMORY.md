@@ -2,3 +2,4 @@
 - [Production admin identity](production-admin-identity.md) — copied preview admin profiles can block first-admin access in the production Clerk tenant.
 - [Clerk invitation delivery](clerk-invitation-delivery.md) — absolute app redirects are required; API acceptance is not proof of email delivery or successful signup.
 - [Organizer tracking scope](organizer-tracking-scope.md) — track organizer adoption, not climber browsing; acceptance and last-seen signals have distinct meanings.
+- [Repository privacy](repository-privacy.md) — keep personal admin emails out of tracked configuration; do not republish pre-cleanup history.
